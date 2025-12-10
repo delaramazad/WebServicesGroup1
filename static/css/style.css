@@ -1,0 +1,15 @@
+body {
+    background-image: url("/static/images/landing.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+h1 {
+    color: rgb(255, 195, 230);
+    opacity: 70%;
+}
+h3{ 
+    color: rgb(255, 195, 230);
+    opacity: 70%;
+}
