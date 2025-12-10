@@ -1,10 +1,23 @@
-# Default ignored files
-/../../../../Webbtjänster T3/WebServicesGroup1/Untitled/.idea/shelf/
-/../../../../Webbtjänster T3/WebServicesGroup1/Untitled/.idea/workspace.xml
-# Editor-based HTTP Client requests
-/../../../../Webbtjänster T3/WebServicesGroup1/Untitled/.idea/httpRequests/
-# Datasource local storage ignored files
-/../../../../Webbtjänster T3/WebServicesGroup1/Untitled/.idea/dataSources/
-/../../../../Webbtjänster T3/WebServicesGroup1/Untitled/.idea/dataSources.local.xml
+# --- PyCharm / IntelliJ (Ignorera inställningar) ---
 .idea/
 *.iml
+*.iws
+*.ipr
+
+# --- VS Code (Ignorera inställningar) ---
+.vscode/
+
+# --- Python (Ignorera kompilator-filer) ---
+__pycache__/
+*.py[cod]
+
+# --- Virtuell Miljö (Ignorera mappen venv) ---
+venv/
+.venv/
+env/
+
+# --- Mac OS (Ignorera systemfiler) ---
+.DS_Store
+
+# --- Hemligheter (VIKTIGT! Ladda aldrig upp nycklar) ---
+.env
