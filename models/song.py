@@ -1,0 +1,1 @@
+#hanterar relevant data från spotify
