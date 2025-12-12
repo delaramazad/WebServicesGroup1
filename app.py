@@ -8,6 +8,20 @@ from services.aviation_service import get_flight_data
 
 app = Flask(__name__)
 
+@app.route("/")
+def root_index():
+    """
+    Function that renders the web application's landing page.
+
+    Returns: 
+        template: index.html
+    """
+    return render_template("index.html")
+
+if __name__ == "__main__":
+    app.run(host="127.0.0.1", port=8081, debug=True)
+
+
 @app.get("/")
 def fetch_flight_number(request):
     flight_number = request.args.get("flightNumber")
@@ -24,15 +38,11 @@ def fetch_flight_number(request):
     flight_data = response.json()
     return jsonify(flight_data)
 
-@app.route("/")
-def root_index():
-    """
-    Function that renders the web application's landing page.
+@app.route('/', methods=['GET', 'POST'])
+def fetch_flight_data():
+    if request.method == 'POST':
+        flight_number = request.form.get('flightNumber')
+        flight_data = get_flight_data(flight_number)
+        return render_template('index.html', flight_data=flight_data)
+    return render_template('index.html')
 
-    Returns: 
-        template: index.html
-    """
-    return render_template("index.html")
-
-if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=8081, debug=True)
