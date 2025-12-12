@@ -1,5 +1,3 @@
-#filen som startar servern
-
 import os
 from flask import Flask, jsonify, render_template, request
 from dotenv import load_dotenv
@@ -8,28 +6,26 @@ from services.aviation_service import get_flight_data
 
 app = Flask(__name__)
 
+# --- HÄR ÄR DINA ROUTES (MÅSTE VARA FÖRE APP.RUN) ---
+
 @app.route("/")
 def root_index():
-    """
-    Function that renders the web application's landing page.
-
-    Returns: 
-        template: index.html
-    """
+    """Renders the landing page."""
     return render_template("index.html")
 
-if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=8081, debug=True)
-
-
-
+# Fixad route: Rätt URL och placerad här uppe
 @app.route('/get_flight_info', methods=['POST'])
 def get_flight_info():
-    data = request.get_json() # Hämta data som skickades från JS
+    data = request.get_json() # Hämta JSON från JS
     flight_number = data.get('flightNumber')
     
+    # Hämta data från din service
     flight_data = get_flight_data(flight_number)
     
-    # Skicka tillbaka datan som JSON istället för en HTML-sida
+    # Skicka tillbaka som JSON
     return jsonify(flight_data)
 
+# --- STARTA SERVERN SIST ---
+if __name__ == "__main__":
+    # Denna kod körs sist och blockerar, så inget får ligga under här
+    app.run(host="127.0.0.1", port=8081, debug=True)
