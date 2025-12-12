@@ -6,7 +6,6 @@ from services.aviation_service import get_flight_data
 
 app = Flask(__name__)
 
-# --- HÄR ÄR DINA ROUTES (MÅSTE VARA FÖRE APP.RUN) ---
 
 @app.route("/")
 def root_index():
