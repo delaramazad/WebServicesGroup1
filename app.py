@@ -4,6 +4,7 @@ import os
 from flask import Flask, jsonify, render_template
 from dotenv import load_dotenv
 import requests
+from services.aviation_service import get_flight_data
 
 app = Flask(__name__)
 
