@@ -1,7 +1,7 @@
 #filen som startar servern
 
 import os
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, request
 from dotenv import load_dotenv
 import requests
 from services.aviation_service import get_flight_data
@@ -22,27 +22,14 @@ if __name__ == "__main__":
     app.run(host="127.0.0.1", port=8081, debug=True)
 
 
-@app.get("/")
-def fetch_flight_number(request):
-    flight_number = request.args.get("flightNumber")
-    if not flight_number:
-        return jsonify({"error": "Missing flightNumber parameter"}), 400
 
-    # Example API call to fetch flight data (replace with actual API and parameters)
-    api_url = f"https://api.example.com/flights/{flight_number}"
-    response = requests.get(api_url)
-
-    if response.status_code != 200:
-        return jsonify({"error": "Failed to fetch flight data"}), response.status_code
-
-    flight_data = response.json()
+@app.route('/get_flight_info', methods=['POST'])
+def get_flight_info():
+    data = request.get_json() # Hämta data som skickades från JS
+    flight_number = data.get('flightNumber')
+    
+    flight_data = get_flight_data(flight_number)
+    
+    # Skicka tillbaka datan som JSON istället för en HTML-sida
     return jsonify(flight_data)
-
-@app.route('/', methods=['GET', 'POST'])
-def fetch_flight_data():
-    if request.method == 'POST':
-        flight_number = request.form.get('flightNumber')
-        flight_data = get_flight_data(flight_number)
-        return render_template('index.html', flight_data=flight_data)
-    return render_template('index.html')
 

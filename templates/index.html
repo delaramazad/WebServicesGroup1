@@ -15,13 +15,14 @@
     <img src="/static/images/bibble.png">
     <div class="topnav">
         <div class="search-container">
-            <form method="POST"> <!-- "#" Här sätter vi action page när vi skapat den sen-->
+            <form method="POST" action="/fetch_data"> <!-- "#" Här sätter vi action page när vi skapat den sen-->
                 <input type="text" placeholder="(eg. AA2730)" name="flightNumber" id="flightNumber">
                 <button type="submit"><i class="fa fa-search"></i></button>
             </form>
             <h3>Take your experience<br>to the next level</h3>
+            <h2>Destination: {{ flight_data['data'][0]['arrival']['iata'] }}</h2>
         </div>
     </div>
 </body>
-
+<script src="/static/js/actionListener.js"></script>
 </html>
