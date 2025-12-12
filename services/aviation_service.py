@@ -7,3 +7,4 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def get_flight_data():
+    pass
