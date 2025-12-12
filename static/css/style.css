@@ -3,13 +3,26 @@ body {
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
+    font-family: "PT Sans", sans-serif;
 }
-
 h1 {
     color: rgb(255, 195, 230);
     opacity: 70%;
+    font-size: 125px;
+    justify-self: center;
 }
-h3{ 
+h3 { 
     color: rgb(255, 195, 230);
     opacity: 70%;
+}
+#bibble {
+    position: relative;
+    left: 65%;
+    bottom: 150px;
+    height: 8vw;
+    width: 7vw;
+}
+.search-container {
+    height: auto;
+    width: ;
 }
