@@ -21,6 +21,11 @@ h3 {
     opacity: 70%;
     text-align: center;
 }
+#h1-underline {
+    width: 20%;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+}
 #logo {
     width: 50%;
 }
