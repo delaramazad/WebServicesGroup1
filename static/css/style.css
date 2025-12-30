@@ -5,24 +5,48 @@ body {
     background-position: center;
     font-family: "PT Sans", sans-serif;
 }
+#content-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 10%;
+}
 h1 {
     color: rgb(255, 195, 230);
     opacity: 70%;
-    font-size: 125px;
-    justify-self: center;
+    text-align: center;
 }
-h3 { 
+h3 {
     color: rgb(255, 195, 230);
     opacity: 70%;
+    text-align: center;
 }
-#bibble {
-    position: relative;
-    left: 65%;
-    bottom: 150px;
-    height: 8vw;
-    width: 7vw;
+#logo {
+    width: 50%;
 }
 .search-container {
     height: auto;
-    width: ;
+    width: 20%;
+}
+.search-container > form {
+    position: relative;
+    width: 100%;
+}
+#flightNumber {
+    width: 100%;
+    min-height: 30px;
+    border-radius: 15px;
+    border: 1px rgb(255, 195, 230) solid;
+    padding-right: 45px; /* plats för knappen */
+}
+form button[type=submit]{
+    position: absolute;
+    right: -40px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: rgb(255, 195, 230);
+    cursor: pointer;
+    font-size: 18px;
 }
