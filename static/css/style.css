@@ -27,14 +27,19 @@ h3 {
     color: rgb(255, 195, 230);
     opacity: 70%;
 }
+h3 > a {
+    text-align: center;
+    color: rgb(255, 195, 230);
+    opacity: 70%;
+}
 h3 a:visited {
     opacity: 70%;
-    color: rgb(255, 195, 230)
+    color: rgb(93, 0, 54)
 }
 h3 a:hover {
-    opacity: 70%;
     cursor: pointer;
-    color: blueviolet;
+    color: rgb(255, 255, 255);
+    opacity: 100%;
 }
 #h1-underline {
     width: 20%;
