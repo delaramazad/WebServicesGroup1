@@ -1,11 +1,13 @@
-export async function fetcher(request) {
-    try {
-        const response = await fetch(request);
-        if (response.ok) {
-            const resource = await response.json();
-            return resource;
-        }
-    } catch (error) {
-        console.warn(error);
-    }
+async function fetchFlightData(flightNumber) {
+  const url = `/api/flight?flightNumber=${encodeURIComponent(flightNumber)}`;
+  const res = await fetch(url, { headers: { "Accept": "application/json" } });
+  const payload = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    const msg = payload?.error || `Request failed (${res.status})`;
+    throw new Error(msg);
+  }
+  return payload;
 }
+
+window.fetchFlightData = fetchFlightData;

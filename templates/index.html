@@ -1,27 +1,59 @@
-<!DOCTYPE html>
-<html lang="en">
-
+<!doctype html>
+<html lang="sv">
 <head>
-    <meta charset="utf-8">
-    <title>Espotifly</title>
-    <link href="/static/css/style.css" rel="stylesheet" type="text/css">
-    <!--Library for search looking glass symbol-->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>espotiFly</title>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 </head>
-
 <body>
-    <h1>espotiFly</h1> <!--Hitta snygg/kul font-->
-    <img src="/static/images/bibble.png">
-    <div class="topnav">
-        <div class="search-container">
-            <form method="POST"> <!-- "#" Här sätter vi action page när vi skapat den sen-->
-                <input type="text" placeholder="(eg. AA2730)" name="flightNumber" id="flightNumber">
-                <button type="submit"><i class="fa fa-search"></i></button>
-            </form>
-            <h3>Take your experience<br>to the next level</h3>
-        </div>
-    </div>
-</body>
+  <div class="page">
+    <main class="screen" role="main" aria-label="espotiFly">
+      <header class="brand">
+        <h1 class="logo">espotiFly</h1>
+        <img class="bibble" src="{{ url_for('static', filename='images/bibble.png') }}" alt="" />
+      </header>
 
+      <section class="hero">
+        <p class="tagline"><em>Take your experience</em><br>to the next level</p>
+
+        <form class="search" method="POST" action="{{ url_for('index_post') }}" novalidate>
+          <label class="sr-only" for="flightNumber">Flight number</label>
+          <input
+            id="flightNumber"
+            name="flightNumber"
+            type="text"
+            inputmode="text"
+            autocomplete="off"
+            placeholder="(eg. AA2730)"
+            value="{{ flight_number or '' }}"
+          />
+          <button class="icon-btn" type="submit" aria-label="Search flight">
+            <span aria-hidden="true">⌕</span>
+          </button>
+        </form>
+
+        {% if error %}
+          <p class="error" role="alert">{{ error }}</p>
+        {% endif %}
+      </section>
+
+      <section class="results" aria-live="polite">
+        {% if flight_data %}
+          <h2 class="results-title">Flight data</h2>
+          <pre class="results-box">{{ flight_data | tojson(indent=2) }}</pre>
+        {% else %}
+          <p class="hint">Sök på ett flight number för att se data här.</p>
+        {% endif %}
+      </section>
+    </main>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/fetcher.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
 </html>
