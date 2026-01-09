@@ -3,13 +3,76 @@ body {
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
+    font-family: "PT Sans", sans-serif;
 }
-
+#content-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 10%;
+}
 h1 {
     color: rgb(255, 195, 230);
     opacity: 70%;
+    text-align: center;
 }
-h3{ 
+h3 {
     color: rgb(255, 195, 230);
     opacity: 70%;
+    text-align: center;
+}
+#h1-underline {
+    width: 20%;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+}
+hr {
+  border: 0;               /* Ta bort standardkanten */
+  height: 2px;             /* Tjocklek */
+  background: rgb(255, 195, 230);     /* Färg */
+  width: 30%;              /* Procentuell bredd */
+  margin-top: 0px;
+  margin-bottom: 10px;      
+}
+#logo {
+    width: 50%;
+}
+.search-container {
+    height: auto;
+    width: 20%;
+}
+.search-container > form {
+    position: relative;
+    width: 100%;
+}
+#flightNumber {
+    width: 100%;
+    min-height: 30px;
+    border-radius: 15px;
+    border: 1px rgb(255, 195, 230) solid;
+    box-sizing: content-box;
+}
+form button[type=submit]{
+    position: absolute;
+    right: 1px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: rgb(255, 195, 230);
+    cursor: pointer;
+    font-size: 18px;
+}
+@media screen and (width <= 650px) {
+    body{
+        background-size:auto;
+
+    }
+    .search-container {
+        height: auto;
+        width: 80%;
+    }
+    hr {
+        width: 80%;  
+    }    
 }
