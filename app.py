@@ -63,7 +63,7 @@ def get_flight_info():
 @app.route("/about-us")
 def about_us_page():
     """Renders a general information page about the project."""
-    return #render_template("index.html")
+    return render_template("about.html")
 
 # START SERVER LAST 
 if __name__ == "__main__":
