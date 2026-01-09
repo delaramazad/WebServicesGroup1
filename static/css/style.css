@@ -18,23 +18,23 @@ h1 {
     margin-bottom: 5px;
 }
 h3 {
-    color: rgb(255, 195, 230);
-    opacity: 70%;
     text-align: center;
 }
 h2 {
+    text-align: center;
     color: rgb(255, 195, 230);
     opacity: 70%;
-    text-align: center;
-
 }
-h2 :hover {
+h3 a:hover {
+    opacity: 70%;
     cursor: pointer;
     color: blueviolet;
 }
-h2 :visited {
-    color: blue;
+h3 a:visited {
+    opacity: 70%;
+    color: rgb(255, 195, 230) !important;
 }
+
 #h1-underline {
     width: 20%;
     margin-bottom: 10px;
