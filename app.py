@@ -14,42 +14,48 @@ app = Flask(__name__)
 
 @app.route("/")
 def root_index():
-    """Renders the landing page."""
     return render_template("index.html")
 
 @app.route('/get_flight_info', methods=['POST'])
 def get_flight_info():
-    data = request.get_json() # get JSON from JS
+    data = request.get_json() 
     flight_number = data.get('flightNumber')
     
     print(f"finding flight: {flight_number}")
 
-    # step 1: get flight data from Aviationstack
+    # step 1: get flight data 
     flight_data = get_flight_data(flight_number)
     
     if not flight_data:
         return jsonify({"error": "No flight data found"}), 404
 
-    # we need the IATA code for the arrival airport to find the country
-    arrival_iata = flight_data.get('arrival', {}).get('iata')
-    print(f"Found arrival IATA: {arrival_iata}")
+    # Hämta ALL info vi kan om ankomsten
+    arrival = flight_data.get('arrival', {})
+    arrival_iata = arrival.get('iata')
+    arrival_icao = arrival.get('icao')
+    arrival_name = arrival.get('airport') # Flygplatsens namn
+
+    print(f"Arrival Data -> IATA: {arrival_iata}, ICAO: {arrival_icao}, Name: {arrival_name}")
 
     country_name = "Unknown"
     music_data = []
 
-    if arrival_iata:
-        # step 2: Get country and ISO code (Wikidata SPARQL) 
-        country_name, iso_code = wiki_service.get_country_data(arrival_iata)
-        print(f"Flight is going to: {country_name} (ISO: {iso_code})")
+    # Om vi har IATA, ICAO eller Namn - kör sökningen
+    if arrival_iata or arrival_icao or arrival_name:
+        
+        # step 2: Skicka in alla tre till funktionen
+        country_name, iso_code = wiki_service.get_country_data(arrival_iata, arrival_icao, arrival_name)
+        
+        if country_name:
+            print(f"Flight is going to: {country_name} (ISO: {iso_code})")
         
         if iso_code:
-            # step 3: Get artists from the country (MusicBrainz) 
-            # Here we send the ISO code (ex'JP' or 'SE'), MusicBrainz uses ISO codes for countries
+            # step 3: Get artists from the country
             music_data = music_service.get_artists_by_country(iso_code)
         else:
-            print("No ISO code found for the destination country.")
+            print("No ISO code found/returned.")
 
-    # step 4: Return combined data as JSON
+    # step 4: Return combined data
     response_data = {
         "flight": flight_data,
         "destination_country": country_name,
@@ -58,6 +64,5 @@ def get_flight_info():
     
     return jsonify(response_data)
 
-# START SERVER LAST 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=8081, debug=True)
