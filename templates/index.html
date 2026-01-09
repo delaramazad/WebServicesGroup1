@@ -19,16 +19,41 @@
     <div id="content-box">
         <img src="/static/images/logga_komplett.png" id="logo" alt="head-logo">
         <h1>Insert flight number</h1>
+        <p>Choose your preferred genre and press search!</p>
         <hr>
         <!--<img src="/static/images/h1-underline.png" id="h1-underline" alt="h1-underline">-->
         <div class="search-container">
             <form method="POST">
-                <input type="text" placeholder="(eg. AA2730)" name="flightNumber" id="flightNumber">
-                <button type="submit"><i class="fa fa-search"></i></button>
+                <div class="textbox-button-field">
+                    <input type="text" placeholder="(eg. AA2730)" name="flightNumber" id="flightNumber">
+                    <button type="submit"><i class="fa fa-search"></i></button>  
+                </div>
+                <p></p>
+                <input type="checkbox" id="genre1" name="genre1" value="pop">
+                <label class="checkbox-labels" for="genre1">Pop</label><br>
+                <input type="checkbox" id="genre2" name="genre2" value="hip-hop">
+                <label class="checkbox-labels" for="genre2">Hip-Hop</label><br>
+                <input type="checkbox" id="genre3" name="genre3" value="rap">
+                <label class="checkbox-labels" for="genre3">Rap</label><br>
+                <input type="checkbox" id="genre4" name="genre4" value="rock">
+                <label class="checkbox-labels" for="genre4">Rock</label><br>
+                <input type="checkbox" id="genre5" name="genre5" value="country">
+                <label class="checkbox-labels" for="genre5">Country</label><br>
+                <input type="checkbox" id="genre6" name="genre6" value="edm">
+                <label class="checkbox-labels" for="genre6">EDM</label><br>
+                <input type="checkbox" id="genre7" name="genre7" value="classical">
+                <label class="checkbox-labels" for="genre7">Classical</label><br>
+                <input type="checkbox" id="genre8" name="genre8" value="r&b">
+                <label class="checkbox-labels" for="genre8">R&B</label><br>
+                <input type="checkbox" id="genre9" name="genre9" value="folk">
+                <label class="checkbox-labels" for="genre9">Folk</label><br>
             </form>
             <h3>Take your experience<br>to the next level</h3>
         </div>
     </div>
+    <footer>
+        <a href="/about-us">About espotiFly</a>
+    </footer>
     <script type="module" src="/static/js/actionListener.js"></script>
 </body>
 </html>

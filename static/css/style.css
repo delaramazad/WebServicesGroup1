@@ -15,6 +15,7 @@ h1 {
     color: rgb(255, 195, 230);
     opacity: 70%;
     text-align: center;
+    margin-bottom: 5px;
 }
 h3 {
     color: rgb(255, 195, 230);
@@ -45,6 +46,10 @@ hr {
     position: relative;
     width: 100%;
 }
+.textbox-button-field {
+    position: relative;
+    width: 100%;
+}
 #flightNumber {
     width: 100%;
     min-height: 30px;
@@ -52,7 +57,11 @@ hr {
     border: 1px rgb(255, 195, 230) solid;
     box-sizing: content-box;
 }
-form button[type=submit]{
+.checkbox-labels {
+    color: rgb(255, 195, 230);
+    opacity: 70%;
+}
+.textbox-button-field button[type=submit]{
     position: absolute;
     right: 1px;
     top: 50%;
@@ -63,6 +72,25 @@ form button[type=submit]{
     cursor: pointer;
     font-size: 18px;
 }
+footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 50px;
+}
+footer > a {
+    color: rgb(255, 195, 230);
+    opacity: 70%;
+    text-decoration: none;
+
+}
+p {
+    margin-top: 0px;
+    padding: 0px;
+    color: rgb(255, 195, 230);
+    opacity: 70%;
+}
+
 @media screen and (width <= 650px) {
     body{
         background-size:auto;
