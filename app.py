@@ -1,59 +1,89 @@
 import os
+from datetime import datetime
 from flask import Flask, jsonify, render_template, request
 from dotenv import load_dotenv
-import requests
 
+# Importera tjänster
 from services.aviation_service import get_flight_data
-from services.wikimedia_service import WikimediaService
+from services.airport_service import AirportService
 from services.musicbrainz_service import MusicBrainzService
+from services.spotify_service import SpotifyService
 
-wiki_service = WikimediaService()
+load_dotenv()
+
+# Initiera tjänster
+airport_service = AirportService()
 music_service = MusicBrainzService()
-app = Flask(__name__)
+spotify_service = SpotifyService()
 
+app = Flask(__name__)
 
 @app.route("/")
 def root_index():
-    """Renders the landing page."""
     return render_template("index.html")
 
 @app.route('/get_flight_info', methods=['POST'])
 def get_flight_info():
-    data = request.get_json() # get JSON from JS
+    data = request.get_json() 
     flight_number = data.get('flightNumber')
     
-    print(f"finding flight: {flight_number}")
+    print(f"Finding flight: {flight_number}")
 
-    # step 1: get flight data from Aviationstack
+    # 1. Hämta flygdata
     flight_data = get_flight_data(flight_number)
-    
     if not flight_data:
         return jsonify({"error": "No flight data found"}), 404
 
-    # we need the IATA code for the arrival airport to find the country
-    arrival_iata = flight_data.get('arrival', {}).get('iata')
-    print(f"Found arrival IATA: {arrival_iata}")
-
-    country_name = "Unknown"
+    # Hämta ankomst-IATA
+    arrival = flight_data.get('arrival', {})
+    arrival_iata = arrival.get('iata')
+    
+    country_display_name = "Unknown"
     music_data = []
+    playlist_url = None
+    iso_code = None
 
+    # 2. Hämta Landskod (ISO)
     if arrival_iata:
-        # step 2: Get country and ISO code (Wikidata SPARQL) 
-        country_name, iso_code = wiki_service.get_country_data(arrival_iata)
-        print(f"Flight is going to: {country_name} (ISO: {iso_code})")
+        iso_code = airport_service.get_country_code(arrival_iata)
         
         if iso_code:
-            # step 3: Get artists from the country (MusicBrainz) 
-            # Here we send the ISO code (ex'JP' or 'SE'), MusicBrainz uses ISO codes for countries
+            print(f"Flight is going to country code: {iso_code}")
+            country_display_name = iso_code # Vi visar koden på hemsidan också
+            
+            # 3. Hämta artister
             music_data = music_service.get_artists_by_country(iso_code)
         else:
-            print("No ISO code found for the destination country.")
+            print(f"Ingen landskod hittades för: {arrival_iata}")
 
-    # step 4: Return combined data as JSON
+    # --- Beräkna flygtid ---
+    flight_duration_minutes = 120 
+    try:
+        dep_str = flight_data.get('departure', {}).get('scheduled')
+        arr_str = flight_data.get('arrival', {}).get('scheduled')
+        if dep_str and arr_str:
+            dep_time = datetime.fromisoformat(dep_str.replace("Z", "+00:00"))
+            arr_time = datetime.fromisoformat(arr_str.replace("Z", "+00:00"))
+            flight_duration_minutes = (arr_time - dep_time).total_seconds() / 60
+    except Exception as e:
+        print(f"Tidsberäkning misslyckades: {e}")
+
+    # 4. Skapa Spellista
+    if music_data and iso_code:
+        # Här skickar vi 'iso_code' som sista parameter!
+        # Då blir namnet: "Espotifly [FLYGNR] to [SE]"
+        playlist_url = spotify_service.create_flight_playlist(
+            music_data, 
+            flight_duration_minutes, 
+            flight_number, 
+            iso_code 
+        )
+
     response_data = {
         "flight": flight_data,
-        "destination_country": country_name,
-        "music_recommendations": music_data
+        "destination_country": country_display_name,
+        "music_recommendations": music_data,
+        "playlist_url": playlist_url
     }
     
     return jsonify(response_data)
