@@ -19,6 +19,8 @@ h1 {
 }
 h3 {
     text-align: center;
+    color: rgb(255, 195, 230);
+    opacity: 70%;
 }
 h2 {
     text-align: center;
