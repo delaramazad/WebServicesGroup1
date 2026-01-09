@@ -19,7 +19,8 @@ class WikimediaService:
         "CDG": ("France", "FR"),
         "AMS": ("Netherlands", "NL"),
         "FRA": ("Germany", "DE"),
-        "BCN": ("Spain", "ES")
+        "BCN": ("Spain", "ES"),
+        "YYZ": ("Canada", "CA")
     }
     
     def get_country_data(self, iata, icao, name):
@@ -65,7 +66,7 @@ class WikimediaService:
 
         try:
             print("Sending request to Wikidata...")
-            response = requests.get(url, params=params, headers=headers, timeout=10)
+            response = requests.get(url, params=params, headers=headers, timeout=10000)
             
             print(f"Wikidata response status: {response.status_code}")
 

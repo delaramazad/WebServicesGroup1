@@ -37,10 +37,22 @@ async function fetchFlightNumber() {
         if(data.music_recommendations && data.music_recommendations.length > 0) {
             console.log(`Music Recommendations: ${data.music_recommendations.length}` + ' artists found.');
         } 
+
+        // --- NYTT: VISA LÄNKEN ---
+        if (data.playlist_url) {
+            console.log("Spellista skapad:", data.playlist_url);
+            
+            // Exempel på hur du kan öppna den direkt eller visa en länk
+            // window.open(data.playlist_url, '_blank'); 
+            
+            // Eller logga den tydligt:
+            console.log("Klicka här för att lyssna: " + data.playlist_url);
+        } else {
+            console.log("Ingen spellista kunde skapas.");
+        }
         } catch (error) {
             console.error('Error fetching flight info:', error);
         }
-
     })
   
 }

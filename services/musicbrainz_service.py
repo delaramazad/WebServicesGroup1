@@ -27,7 +27,7 @@ class MusicBrainzService:
         params = {
             "query": query,
             "fmt": "json",
-            "limit": 15 # Vi tar lite fler för att kunna rensa bort dubbletter
+            "limit": 40 # Vi tar lite fler för att kunna rensa bort dubbletter
         }   
         
         headers = {
