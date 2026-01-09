@@ -58,6 +58,13 @@ def get_flight_info():
     
     return jsonify(response_data)
 
+##################### ABOUT US PAGE #######################
+
+@app.route("/about-us")
+def about_us_page():
+    """Renders a general information page about the project."""
+    return render_template("about.html")
+
 # START SERVER LAST 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=8081, debug=True)
