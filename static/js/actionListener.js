@@ -184,22 +184,20 @@ if (form) {
                 body: JSON.stringify({ flightNumber, genres })
             });
 
-            // 2. DÖLJ SPINNER
             if (spinner) spinner.style.display = 'none';
 
             if (!data || data.error) {
+              window.alert("Flight not found. Please check the flight number and try again.");
                 if (emptyP) emptyP.textContent = data?.error ?? "Could not find flight.";
                 return;
             }
 
-            // 3. UPPDATERA UI
             const city = data.destination_city || "Unknown City";
             const country = data.destination_country || "Unknown Country";
             state.city = city;
 
             if (titleElement) titleElement.innerText = `${city}, ${country}`;
 
-            // Bild
             if (imageElement) {
                 if (data.city_image) {
                     imageElement.src = data.city_image;
