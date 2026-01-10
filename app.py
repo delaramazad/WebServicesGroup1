@@ -95,6 +95,36 @@ def about_us_page():
     """Renders a general information page about the project."""
     return render_template("about.html")
 
+
+#################### DESTINNATION PAGE ###############
+
+@app.route("/destination")
+def destination_page():
+    flight_number = request.args.get('flightNumber')
+    
+    if not flight_number:
+        return render_template("index.html")
+
+    # 1. Hämta flygdata
+    flight_data = get_flight_data(flight_number)
+    if not flight_data:
+        return "Flyget hittades inte", 404
+
+    # 2. Hämta destination och landskod
+    arrival = flight_data.get('arrival', {})
+    arrival_iata = arrival.get('iata')
+    city_name = arrival.get('city') or arrival.get('airport') or "Okänd stad"
+    
+    country_name = "Unknown"
+    if arrival_iata:
+        # Vi använder airport_service för att få landskoden (t.ex. 'TR')
+        country_name = airport_service.get_country_code(arrival_iata)
+
+    # Vi skickar med city och country till templaten
+    return render_template("destination.html", 
+                           city=city_name, 
+                           country=country_name,
+                           flight_number=flight_number)
 # START SERVER LAST 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=8081, debug=True)

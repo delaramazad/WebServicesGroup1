@@ -104,3 +104,98 @@ p {
         width: 80%;  
     }    
 }
+
+/* Stil för destinationssidan */
+
+/* --- Destinationssidan --- */
+.destination-body {
+    background-image: url("/static/images/landing.png"); /* Återanvänder din bakgrund */
+    background-size: cover;
+    color: white;
+}
+
+#destination-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+.destination-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 40px;
+}
+
+.logo-text {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #ffd1dc; /* Din rosa färg */
+}
+
+.bibble-icon {
+    width: 50px;
+    height: auto;
+}
+
+.location-section {
+    width: 80%;
+    max-width: 400px;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.location-title {
+    font-size: 1.8rem;
+    margin-bottom: 5px;
+}
+
+.title-underline {
+    height: 1px;
+    background: white;
+    width: 100%;
+}
+
+.destination-image-wrapper {
+    width: 90%;
+    max-width: 350px;
+    margin-bottom: 40px;
+}
+
+.city-preview {
+    width: 100%;
+    border-radius: 25px; /* Rundade hörn enligt bilden */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 85%;
+    max-width: 300px;
+}
+
+.btn-pill {
+    background-color: #53459b; /* Lila färg från bilden */
+    color: white;
+    border: none;
+    padding: 15px 25px;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
+}
+
+.btn-pill i {
+    background: white;
+    color: #53459b;
+    padding: 5px;
+    border-radius: 50%;
+    font-size: 0.8rem;
+}
