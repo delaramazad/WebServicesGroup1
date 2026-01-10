@@ -26,6 +26,9 @@ def root_index():
 def get_flight_info():
     data = request.get_json() 
     flight_number = data.get('flightNumber')
+    genres = data.get('genres', [])  # Hämta valda genrer från förfrågan
+    if not isinstance(genres, list):
+        genres = []
     
     print(f"Finding flight: {flight_number}")
 
@@ -52,7 +55,7 @@ def get_flight_info():
             country_display_name = iso_code # Vi visar koden på hemsidan också
             
             # 3. Hämta artister
-            music_data = music_service.get_artists_by_country(iso_code)
+            music_data = music_service.get_artists_by_country(iso_code, genres)
         else:
             print(f"Ingen landskod hittades för: {arrival_iata}")
 
@@ -76,7 +79,7 @@ def get_flight_info():
             music_data, 
             flight_duration_minutes, 
             flight_number, 
-            iso_code 
+            iso_code
         )
 
     response_data = {

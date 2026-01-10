@@ -10,13 +10,24 @@ async function fetchFlightNumber() {
 
         console.log(flightNumber);
 
+        const getSelectedGenres = () => {
+            return Array.from(document.querySelectorAll('input[name="genre"]:checked'))
+            .map(el => el.value);
+        };
+
+        const genres = getSelectedGenres();
+        console.log('Selected genres:', genres); // för debugging
+
         try {
         const data = await fetcher('/get_flight_info', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ flightNumber: flightNumber })
+            body: JSON.stringify({
+                flightNumber: flightNumber,
+                genres: genres
+            })
         });
 
         console.log(data);
