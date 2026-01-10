@@ -1,9 +1,9 @@
+import re
 import requests
+import random
+import hashlib
 
 class MusicBrainzService:
-    
-    # --- RESERVLISTA (FALLBACK) ---
-    # Denna används nu BARA om API:et misslyckas eller ger 0 träffar.
     MUSIC_BACKUPS = {
         "SE": ["ABBA", "Avicii", "Zara Larsson", "Roxette", "Swedish House Mafia"],
         "TR": ["Tarkan", "Sezen Aksu", "Müslüm Gürses", "Sertab Erener", "Hadise"],
@@ -17,59 +17,93 @@ class MusicBrainzService:
         "IT": ["Måneskin", "Andrea Bocelli", "Eros Ramazzotti"]
     }
 
-    def get_artists_by_country(self, iso_code):
-        # Inställningar för API-anropet
+    DEFAULT_TAGS = ["pop", "rock", "dance", "electronic", "hip-hop"]
+
+    SPOTIFY_TO_MB = {
+        "hip hop": "hip-hop",
+        "hip-hop": "hip-hop",
+        "edm": "electronic",
+        "r&b": "rnb",
+        "rnb": "rnb",
+    }
+
+    def _sanitize(self, s: str) -> str:
+        s = (s or "").strip().lower()
+        s = s.replace('"', "")
+        s = re.sub(r"[^a-z0-9 \-\_\+\&]", "", s)
+        s = re.sub(r"\s+", " ", s)
+        return s
+
+    def _normalize_genres(self, genres):
+        out = []
+        if not isinstance(genres, list):
+            return out
+        for g in genres:
+            if not isinstance(g, str):
+                continue
+            g2 = self._sanitize(g)
+            if not g2:
+                continue
+            g2 = self.SPOTIFY_TO_MB.get(g2, g2)
+            if g2 not in out:
+                out.append(g2)
+        return out
+
+    def _mb_search(self, iso_code, tags, limit=120):
         url = "https://musicbrainz.org/ws/2/artist/"
-        
-        # Sök efter land OCH populära genrer (för att filtrera bort okända band)
-        query = f"country:{iso_code} AND (tag:pop OR tag:rock OR tag:dance OR tag:electronic OR tag:hip-hop)"
+        tags_query = " OR ".join([f'tag:"{t}"' for t in tags])
+        query = f"country:{iso_code} AND ({tags_query})"
 
-        params = {
-            "query": query,
-            "fmt": "json",
-            "limit": 40 # Vi tar lite fler för att kunna rensa bort dubbletter
-        }   
-        
-        headers = {
-            'User-Agent': 'WebServiceGroup1/1.0 (delaram.azad99@gmail.com)'
-        }
+        params = {"query": query, "fmt": "json", "limit": limit}
+        headers = {'User-Agent': 'WebServiceGroup1/1.0 (delaram.azad99@gmail.com)'}
 
-        # --- FÖRSÖK 1: API (PRIORITERAT) ---
-        try:
-            print(f"Anropar MusicBrainz API för landskod: {iso_code}...")
-            response = requests.get(url, params=params, headers=headers, timeout=5)
-            
-            if response.status_code == 200:
-                data = response.json()
-                artists_raw = data.get("artists", [])
-                
-                artist_names = []
-                for artist in artists_raw:
-                    name = artist.get("name")
-                    # Spara namnet om det finns och inte redan ligger i listan
-                    if name and name not in artist_names:
-                        artist_names.append(name)
-                
-                # OM vi fick träffar: Returnera dem direkt!
-                if artist_names:
-                    print(f"Hittade {len(artist_names)} artister via API.")
-                    for artist in artist_names:
-                        print(f"- {artist}")
-                    return artist_names # return artists
+        print(f"MB query: {query}")
+        r = requests.get(url, params=params, headers=headers, timeout=8)
+        if r.status_code != 200:
+            print(f"MusicBrainz API error: {r.status_code}")
+            return []
+
+        data = r.json()
+        artists_raw = data.get("artists", [])
+        names = []
+        for a in artists_raw:
+            name = a.get("name")
+            if name and name not in names:
+                names.append(name)
+        return names
+
+    def _stable_shuffle(self, items, seed_str):
+        seed = int(hashlib.sha256(seed_str.encode("utf-8")).hexdigest()[:8], 16)
+        rnd = random.Random(seed)
+        items = list(items)
+        rnd.shuffle(items)
+        return items
+
+    def get_artists_by_country(self, iso_code, genres=None):
+        iso_code = (iso_code or "").upper().strip()
+        user_tags = self._normalize_genres(genres)
+
+        # 1) Kör ENBART på user tags först (så genre faktiskt gör skillnad)
+        if user_tags:
+            try:
+                artists = self._mb_search(iso_code, user_tags, limit=120)
+                if artists:
+                    # genre-styrd ordning => Spotify tar olika artister tidigt => olika låtar
+                    artists = self._stable_shuffle(artists, f"{iso_code}|{','.join(sorted(user_tags))}")
+                    return artists[:40]
                 else:
-                    print("API fungerade men gav inga relevanta artister.")
-            
-            else:
-                print(f"MusicBrainz API error: {response.status_code}")
+                    print("0 träffar på valda genrer – fallback till default.")
+            except Exception as e:
+                print(f"Kunde inte nå MusicBrainz API (user tags): {e}")
 
+        # 2) Fallback: default tags
+        try:
+            artists = self._mb_search(iso_code, self.DEFAULT_TAGS, limit=120)
+            if artists:
+                artists = self._stable_shuffle(artists, f"{iso_code}|default")
+                return artists[:40]
         except Exception as e:
-            print(f"Kunde inte nå MusicBrainz API: {e}")
+            print(f"Kunde inte nå MusicBrainz API (default): {e}")
 
-        # --- FÖRSÖK 2: BACKUP-LISTA (OM API MISSLYCKADES) ---
         print("Går över till reservlistan (Backup)...")
-        
-        if iso_code in self.MUSIC_BACKUPS:
-            return self.MUSIC_BACKUPS[iso_code]
-
-        # Om varken API eller Backup har data:
-        return ["Inga artister hittades"]
+        return self.MUSIC_BACKUPS.get(iso_code, ["Inga artister hittades"])
