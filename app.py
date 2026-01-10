@@ -1,5 +1,9 @@
 import os
+import json
 from datetime import datetime
+from urllib.parse import quote
+from urllib.request import Request, urlopen
+
 from flask import Flask, jsonify, render_template, request
 from dotenv import load_dotenv
 
@@ -8,8 +12,7 @@ from services.aviation_service import get_flight_data
 from services.airport_service import AirportService
 from services.musicbrainz_service import MusicBrainzService
 from services.spotify_service import SpotifyService
-# VIKTIGT: Denna saknades!
-from services.wikimedia_service import WikimediaService 
+from services.wikimedia_service import WikimediaService
 
 load_dotenv()
 
@@ -17,22 +20,109 @@ load_dotenv()
 airport_service = AirportService()
 music_service = MusicBrainzService()
 spotify_service = SpotifyService()
-wikimedia_service = WikimediaService() # VIKTIGT: Starta denna tjänst
+wikimedia_service = WikimediaService()
 
 app = Flask(__name__)
+
 
 @app.route("/")
 def root_index():
     return render_template("index.html")
 
+
+# ---------- Wikipedia helpers ----------
+def _http_get_json(url: str) -> dict | None:
+    try:
+        req = Request(
+            url,
+            headers={
+                "User-Agent": "Espotifly/1.0 (student project)",
+                "Accept": "application/json"
+            }
+        )
+        with urlopen(req, timeout=10) as resp:
+            raw = resp.read().decode("utf-8")
+            return json.loads(raw)
+    except Exception as e:
+        print(f"HTTP GET failed: {e}")
+        return None
+
+
+def get_wikipedia_summary(city: str) -> dict:
+    if not city:
+        return {
+            "title": "Unknown",
+            "extract": "No city provided.",
+            "thumbnail": None,
+            "wikipedia_url": None
+        }
+
+    title = city.strip()
+    url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{quote(title)}"
+    data = _http_get_json(url)
+
+    if not data or data.get("type") == "https://mediawiki.org/wiki/HyperSwitch/errors/not_found":
+        return {
+            "title": title,
+            "extract": f"No Wikipedia summary found for {title}.",
+            "thumbnail": None,
+            "wikipedia_url": f"https://en.wikipedia.org/wiki/{quote(title.replace(' ', '_'))}"
+        }
+
+    extract = data.get("extract")
+    thumb = None
+    if isinstance(data.get("thumbnail"), dict):
+        thumb = data["thumbnail"].get("source")
+
+    page_url = None
+    if isinstance(data.get("content_urls"), dict):
+        desktop = data["content_urls"].get("desktop", {})
+        page_url = desktop.get("page")
+
+    return {
+        "title": data.get("title", title),
+        "extract": extract,
+        "thumbnail": thumb,
+        "wikipedia_url": page_url
+    }
+
+
+def get_wikipedia_sights(city: str, limit: int = 8) -> dict:
+    if not city:
+        return {"items": []}
+
+    # Wikipedia search query for attractions
+    query = f"{city} tourist attractions"
+    url = (
+        "https://en.wikipedia.org/w/api.php"
+        f"?action=query&list=search&srsearch={quote(query)}"
+        "&format=json"
+    )
+
+    data = _http_get_json(url)
+    if not data or "query" not in data or "search" not in data["query"]:
+        return {"items": []}
+
+    items = []
+    for hit in data["query"]["search"][:limit]:
+        title = hit.get("title")
+        if not title:
+            continue
+        page_url = f"https://en.wikipedia.org/wiki/{quote(title.replace(' ', '_'))}"
+        items.append({"name": title, "url": page_url})
+
+    return {"items": items}
+
+
+# ---------- Main API ----------
 @app.route('/get_flight_info', methods=['POST'])
 def get_flight_info():
-    data = request.get_json() 
+    data = request.get_json()
     flight_number = data.get('flightNumber')
-    genres = data.get('genres', [])  # Hämta valda genrer från förfrågan
+    genres = data.get('genres', [])
     if not isinstance(genres, list):
         genres = []
-    
+
     print(f"Finding flight: {flight_number}")
 
     # 1. Hämta flygdata
@@ -43,10 +133,10 @@ def get_flight_info():
     # Hämta ankomst-IATA
     arrival = flight_data.get('arrival', {})
     arrival_iata = arrival.get('iata')
-    
-    # Initiera variabler så de inte kraschar om de är tomma
+
+    # Initiera variabler
     country_display_name = "Unknown"
-    city_name = "Unknown City" # Standardvärde
+    city_name = "Unknown City"
     image_url = None
     music_data = []
     playlist_url = None
@@ -54,41 +144,35 @@ def get_flight_info():
 
     # 2. Hämta Landskod OCH Stad
     if arrival_iata:
-        # FÖRSÖK 1: Använd AirportService (Om du uppdaterat den filen)
         try:
-            # OBS: Detta kräver att du har uppdaterat services/airport_service.py 
-            # enligt instruktionen tidigare!
             iso_code, city_name_from_service = airport_service.get_location_info(arrival_iata)
-            
+
             if iso_code:
                 country_display_name = iso_code
             if city_name_from_service:
                 city_name = city_name_from_service
 
         except AttributeError:
-            # Fallback: Om du har den GAMLA airport_service.py kvar
             iso_code = airport_service.get_country_code(arrival_iata)
             country_display_name = iso_code or "Unknown"
-            # Försök ta staden från flygdatan istället
             city_from_flight = arrival.get('city')
             if city_from_flight:
                 city_name = city_from_flight
 
         if iso_code:
             print(f"Flight is going to: {city_name} ({iso_code})")
-            
+
             # 3. Hämta artister
             music_data = music_service.get_artists_by_country(iso_code, genres)
 
-            # 4. Hämta bild på staden (NYTT)
+            # 4. Hämta bild på staden
             if city_name and city_name != "Unknown City":
-                # Använd wikimedia-tjänsten
                 image_url = wikimedia_service.get_city_image(city_name)
         else:
             print(f"Ingen landskod hittades för: {arrival_iata}")
 
     # --- Beräkna flygtid ---
-    flight_duration_minutes = 120 
+    flight_duration_minutes = 120
     try:
         dep_str = flight_data.get('departure', {}).get('scheduled')
         arr_str = flight_data.get('arrival', {}).get('scheduled')
@@ -102,29 +186,43 @@ def get_flight_info():
     # 5. Skapa Spellista
     if music_data and iso_code:
         playlist_url = spotify_service.create_flight_playlist(
-            music_data, 
-            flight_duration_minutes, 
-            flight_number, 
+            music_data,
+            flight_duration_minutes,
+            flight_number,
             iso_code
         )
 
-    # Bygg svaret (Här kraschade din gamla kod för att variablerna inte fanns)
     response_data = {
         "flight": flight_data,
         "destination_country": country_display_name,
-        "destination_city": city_name, # Nu är denna definierad!
-        "city_image": image_url,       # Vi döper nyckeln till city_image för att matcha JS
+        "destination_city": city_name,
+        "city_image": image_url,
         "music_recommendations": music_data,
         "playlist_url": playlist_url
     }
-    
+
     return jsonify(response_data)
+
+
+# ---------- Facts & Sights API ----------
+@app.route("/api/city/facts")
+def city_facts():
+    city = request.args.get("city", "").strip()
+    return jsonify(get_wikipedia_summary(city))
+
+
+@app.route("/api/city/sights")
+def city_sights():
+    city = request.args.get("city", "").strip()
+    return jsonify(get_wikipedia_sights(city))
+
 
 ##################### ABOUT US PAGE #######################
 @app.route("/about-us")
 def about_us_page():
     return render_template("about.html")
 
-# START SERVER LAST 
+
+# START SERVER LAST
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=8081, debug=True)

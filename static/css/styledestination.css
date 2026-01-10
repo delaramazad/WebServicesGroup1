@@ -1,4 +1,4 @@
-/* --- styledestination.css --- */
+/* --- Destination section --- */
 
 #destination-container {
     width: 100%;
@@ -17,7 +17,7 @@
 }
 
 @keyframes fadeIn {
-    to { opacity: 1; }
+  to { opacity: 1; }
 }
 
 .location-title {
@@ -27,17 +27,17 @@
 }
 
 .title-underline {
-    height: 2px;
-    width: 60px;
-    background-color: rgb(255, 195, 230);
-    margin: 0 auto 20px auto;
+  height: 2px;
+  width: 60px;
+  background-color: rgb(255, 195, 230);
+  margin: 0 auto 20px auto;
 }
 
 .destination-image-wrapper {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    margin-bottom: 25px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 25px;
 }
 
 #city-image {
@@ -52,7 +52,8 @@
     display: none; /* Visas via JS när bild finns */
 }
 
-/* Knapp-gruppen */
+/* --- Button group --- */
+
 .button-group {
     display: flex;
     flex-direction: column; /* Staplar knappar vertikalt */
@@ -63,25 +64,27 @@
     width: 100%;
 }
 
-/* De lila knapparna */
 .btn-pill {
-    background-color: #484396;
-    color: white !important;
-    border: none;
-    border-radius: 30px;
-    padding: 15px 25px;
-    font-size: 16px;
-    font-family: "PT Sans", sans-serif;
-    text-align: left;
-    width: 100%;
-    max-width: 300px;
-    display: flex; /* För ikoner och text */
-    align-items: center;
-    gap: 15px;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    transition: transform 0.2s, background-color 0.2s;
-    text-decoration: none;
+  background-color: #484396;
+  color: #fff !important;
+  border: none;
+  border-radius: 30px;
+  padding: 15px 22px;
+  font-size: 16px;
+  font-family: "PT Sans", sans-serif;
+  text-align: left;
+
+  width: 100%;
+  max-width: 320px;
+
+  display: flex;
+  align-items: center;
+  gap: 15px;
+
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  transition: transform 0.2s, background-color 0.2s;
+  text-decoration: none;
 }
 
 /* Specifikt för spotify-knappen som är en <a> tagg */
@@ -90,10 +93,86 @@
 }
 
 .btn-pill:hover {
-    transform: translateY(-2px);
-    background-color: #5a54b5;
+  transform: translateY(-2px);
+  background-color: #5a54b5;
 }
 
 .btn-pill i {
-    font-size: 1.2em;
+  font-size: 1.2em;
+}
+
+/* --- Accordion panels (Facts + Sights) --- */
+
+.accordion-panel {
+  width: 100%;
+  max-width: 520px;
+  margin-top: 16px;
+  padding: 16px 18px;
+
+  border-radius: 18px;
+  border: 1px solid rgba(255, 195, 230, 0.35);
+  background: rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(6px);
+
+  color: rgb(255, 195, 230);
+  opacity: 0.95;
+}
+
+.is-hidden {
+  display: none;
+}
+
+.panel-title {
+  font-weight: 700;
+  margin: 0 0 10px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.loading {
+  font-style: italic;
+  opacity: 0.9;
+}
+
+.panel-list {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.panel-list li {
+  margin: 8px 0;
+}
+
+.panel-link {
+  color: rgb(255, 195, 230);
+  text-decoration: underline;
+}
+
+#wiki-link {
+    display: flex;
+    justify-content: center;
+}
+
+.panel-link:hover {
+  color: #ffffff;
+}
+
+/* Mobile tweaks */
+@media (max-width: 650px) {
+  #destination-container {
+    max-width: 95%;
+  }
+
+  #city-image.city-preview {
+    max-width: 95%;
+    height: 220px;
+  }
+
+  .btn-pill {
+    max-width: 95%;
+  }
+
+  .accordion-panel {
+    max-width: 95%;
+  }
 }
