@@ -1,88 +1,144 @@
+/* --- style.css --- */
 body {
     background-image: url("/static/images/landing.png");
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
     font-family: "PT Sans", sans-serif;
+    margin: 0; 
 }
+
 #content-box {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 10%;
+    padding-top: 5%;
+    min-height: auto;
 }
+
 h1 {
     color: rgb(255, 195, 230);
-    opacity: 70%;
+    opacity: 0.7; 
     text-align: center;
     margin-bottom: 5px;
 }
-h2 {
+
+h2, h3 {
     text-align: center;
     color: rgb(255, 195, 230);
-    opacity: 70%;
+    opacity: 0.7;
 }
-h3 {
-    text-align: center;
-    color: rgb(255, 195, 230);
-    opacity: 70%;
-}
+
 h3 > a {
     text-align: center;
     color: rgb(255, 195, 230);
-    opacity: 70%;
+    opacity: 0.7;
 }
+
 h3 a:visited {
-    opacity: 70%;
-    color: rgb(93, 0, 54)
+    opacity: 0.7;
+    color: rgb(93, 0, 54);
 }
+
 h3 a:hover {
     cursor: pointer;
     color: rgb(255, 255, 255);
-    opacity: 100%;
+    opacity: 1;
 }
-#h1-underline {
-    width: 20%;
-    margin-bottom: 10px;
-    padding-bottom: 10px;
-}
+
 hr {
-  border: 0;               /* Ta bort standardkanten */
-  height: 2px;             /* Tjocklek */
-  background: rgb(255, 195, 230);     /* Färg */
-  width: 30%;              /* Procentuell bredd */
-  margin-top: 0px;
-  margin-bottom: 10px;      
+    border: 0;
+    height: 2px;
+    background: rgb(255, 195, 230);
+    width: 30%;
+    margin-top: 0px;
+    margin-bottom: 10px;
 }
+
 #logo {
     width: 50%;
 }
+
 .search-container {
     height: auto;
     width: 20%;
+    min-width: 300px; 
+    
 }
+
 .search-container > form {
     position: relative;
     width: 100%;
 }
+
 .textbox-button-field {
     position: relative;
     width: 100%;
+    
 }
+
 #flightNumber {
     width: 100%;
     min-height: 30px;
     border-radius: 15px;
     border: 1px rgb(255, 195, 230) solid;
-    box-sizing: content-box;
+    box-sizing: border-box; 
+    padding: 5px 10px;
 }
+
 .checkbox-labels {
     color: rgb(255, 195, 230);
-    opacity: 70%;
+    opacity: 0.7;
 }
-.textbox-button-field button[type=submit]{
+
+/* Behållaren för alla genres */
+.checkbox-group {
+    display: flex;
+    flex-wrap: wrap; /* Viktigt! Låter knapparna radbrytas snyggt */
+    justify-content: center;
+    gap: 10px; /* Mellanrum mellan knapparna */
+    margin-top: 15px;
+    width: 100%;
+}
+
+/* Dölj den vanliga fula checkbox-rutan helt */
+.checkbox-group input[type="checkbox"] {
+    display: none;
+}
+
+/* Styla texten/etiketten så den ser ut som en knapp */
+.checkbox-labels {
+    display: inline-block;
+    padding: 8px 15px;
+    background-color: rgba(255, 255, 255, 0.1); /* Genomskinlig bakgrund */
+    border: 1px solid rgb(255, 195, 230);
+    border-radius: 20px; /* Runda hörn */
+    color: rgb(246, 233, 241);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease; /* Mjuk animation */
+    user-select: none; /* Gör att man inte markerar texten när man klickar snabbt */
+}
+
+/* Hover-effekt (när man håller musen över) */
+.checkbox-labels:hover {
+    background-color: rgba(255, 195, 230, 0.2);
+    border-color: #fff;
+    color: #fff;
+}
+
+/* VIKTIGT: Detta händer när man klickar (när checkboxen är "checked") */
+.checkbox-group input[type="checkbox"]:checked + label {
+    background-color: #484396; /* Din lila färg (eller använd rosa #d63384) */
+    border-color: #484396;
+    color: white;
+    transform: scale(1.05); /* Knappen växer lite för att visa att den är vald */
+    box-shadow: 0 0 10px rgba(72, 67, 150, 0.5); /* Snyggt glow */
+}
+
+.textbox-button-field button[type=submit] {
     position: absolute;
-    right: 1px;
+    right: 5px;
     top: 50%;
     transform: translateY(-50%);
     background: none;
@@ -91,126 +147,64 @@ hr {
     cursor: pointer;
     font-size: 18px;
 }
+
+/* Spinner styling */
+#loading-spinner {
+    display: none; /* Dold, visas via JS */
+    text-align: center;
+    margin-top: 30px;
+    color: rgb(255, 195, 230);
+}
+
+#loading-spinner i {
+    font-size: 48px; 
+}
+
+/* Footer */
 footer {
     display: flex;
     flex-direction: column;
     align-items: center;
     margin-top: 50px;
+    padding-bottom: 20px;
 }
+
 footer > a {
     color: rgb(255, 195, 230);
-    opacity: 70%;
+    opacity: 0.7;
     text-decoration: none;
+    margin: 5px 0;
+}
+
+footer > a:hover {
+    text-decoration:wavy underline;
+    opacity: 1;
 
 }
+
 #empty-p {
     margin-top: 0px;
     padding: 0px;
     color: rgb(255, 195, 230);
-    opacity: 70%;
+    opacity: 0.7;
 }
+
 p {
     color: rgb(255, 195, 230);
-    opacity: 70%;
+    opacity: 0.7;
     text-align: center;
 }
 
-@media screen and (width <= 650px) {
-    body{
-        background-size:auto;
-
+/* Mobil-anpassning */
+@media screen and (max-width: 650px) {
+    body {
+        background-size: auto;
     }
     .search-container {
         height: auto;
         width: 80%;
     }
     hr {
-        width: 80%;  
-    }    
-
-    /* --- styledestination.css --- */
-
-#destination-container {
-    width: 100%;
-    max-width: 500px; /* Samma bredd som innehållet för balans */
-    display: flex;      /* Gör så att vi kan använda flexbox */
-    flex-direction: column; /* Stapla allt ovanpå varandra */
-    align-items: center;    /* Centrera allt horisontellt */
-    margin-top: 30px;
-    opacity: 0;         /* Startar osynlig för animation */
-    animation: fadeIn 1s forwards;
-}
-
-/* Animation för att mjukt visa resultatet */
-@keyframes fadeIn {
-    to { opacity: 1; }
-}
-
-.location-title {
-    font-size: 2em;
-    margin-bottom: 5px;
-    text-shadow: 0px 2px 4px rgba(0,0,0,0.3); /* Gör texten tydlig mot bakgrunden */
-}
-
-.title-underline {
-    height: 2px;
-    width: 60px;
-    background-color: rgb(255, 195, 230);
-    margin: 0 auto 20px auto;
-}
-
-.destination-image-wrapper {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    margin-bottom: 25px;
-}
-
-#city-image {
-    width: 100%;
-    max-width: 400px; /* Maxbredd på bilden */
-    height: 250px;
-    object-fit: cover; /* Beskär bilden snyggt istället för att dra ut den */
-    border-radius: 20px;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-}
-
-/* Knapp-gruppen */
-.button-group {
-    display: flex;
-    flex-direction: column; /* Stapla knapparna vertikalt som på bilden */
-    gap: 15px;
-    width: 100%;
-    align-items: center;
-}
-
-/* De lila knapparna */
-.btn-pill {
-    background-color: #484396; /* Lila färg från screenshot */
-    color: white !important;
-    border: none;
-    border-radius: 30px;
-    padding: 15px 25px;
-    font-size: 16px;
-    font-family: "PT Sans", sans-serif;
-    text-align: left; /* Texten justerad till vänster inuti knappen */
-    width: 100%;
-    max-width: 300px; /* Samma bredd som sökfältet */
-    display: flex;
-    align-items: center;
-    gap: 15px; /* Avstånd mellan ikon och text */
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    transition: transform 0.2s, background-color 0.2s;
-    text-decoration: none;
-}
-
-.btn-pill:hover {
-    transform: translateY(-2px);
-    background-color: #5a54b5;
-}
-
-.btn-pill i {
-    font-size: 1.2em;
-}
+        width: 80%;
+    }
 }

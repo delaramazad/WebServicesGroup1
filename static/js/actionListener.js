@@ -3,67 +3,61 @@ import { fetcher } from './fetcher.js';
 async function fetchFlightNumber() {
     const button = document.querySelector('button');
     
-    // Säkerhetskoll om knappen inte finns
+    // Hämta referenser till containrarna
+    const spinner = document.getElementById('loading-spinner');
+    const destinationContainer = document.getElementById('destination-container');
+
     if (!button) return;
 
     button.addEventListener("click", async (event) => {
-        event.preventDefault(); // Stoppa sidan från att laddas om!
+        event.preventDefault(); 
 
         const flightInput = document.getElementById('flightNumber');
         const flightNumber = flightInput.value;
-        console.log(`Söker efter: ${flightNumber}`);
-
+        
+        // Hämta genres
         const getSelectedGenres = () => {
             return Array.from(document.querySelectorAll('input[name="genre"]:checked'))
             .map(el => el.value);
         };
-
         const genres = getSelectedGenres();
-        console.log('Selected genres:', genres); // för debugging
+
+        // --- STEG 1: VISA SPINNER & RENSA GAMLA RESULTAT ---
+        if (spinner) spinner.style.display = 'block';       // Visa snurran
+        if (destinationContainer) destinationContainer.style.display = 'none'; // Dölj gamla resultat
+        // ----------------------------------------------------
 
         try {
-        const data = await fetcher('/get_flight_info', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                flightNumber: flightNumber,
-                genres: genres
-            })
-        });
+            const data = await fetcher('/get_flight_info', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    flightNumber: flightNumber,
+                    genres: genres
+                })
+            });
 
-        console.log(data);
-
-        if (!data || data.error) {
-        console.warn("Flyget hittades inte eller något gick fel.");
-        // Visa meddelande till användaren (t.ex. i en div på skärmen)
-        console.log("Felmeddelande:", data ? data.error : "Okänt fel");
-        return; // AVBRYT HÄR så att vi inte kraschar längre ner
-    }
-
-        if(data.destination_country) {
-            console.log(`Destination Country: ${data.destination_country}`);
-        } else {
-            console.log('No destination country found.');
-        }
+            // --- STEG 2: DÖLJ SPINNER NÄR SVARET KOMMIT ---
+            if (spinner) spinner.style.display = 'none';
+            // ----------------------------------------------
 
             console.log("Data mottagen:", data);
 
-            // 2. Felhantering
+            // Felhantering
             if (!data || data.error) {
                 console.warn("Fel:", data ? data.error : "Okänt fel");
                 alert("Kunde inte hitta flyget. Kontrollera numret och försök igen.");
-                return; // Avbryt här om det blev fel
+                return; 
             }
 
-            // 3. Hämta HTML-elementen
-            const container = document.getElementById('destination-container');
+            // Hämta HTML-elementen för resultat
             const titleElement = document.getElementById('location-title');
             const imageElement = document.getElementById('city-image');
             const spotifyBtn = document.getElementById('spotify-btn');
 
-            // 4. Uppdatera Titeln
+            // Uppdatera Titeln
             const city = data.destination_city || "Unknown City";
             const country = data.destination_country || "Unknown Country";
             
@@ -71,13 +65,12 @@ async function fetchFlightNumber() {
                 titleElement.innerText = `${city}, ${country}`;
             }
 
-            // 5. Uppdatera Bilden
+            // Uppdatera Bilden
             if (imageElement) {
                 if (data.city_image) {
                     imageElement.src = data.city_image;
                     imageElement.style.display = "block";
                 } else if (data.destination_city) {
-                    // Fallback-bild
                     imageElement.src = `https://loremflickr.com/600/400/${data.destination_city},cityscape`;
                     imageElement.style.display = "block";
                 } else {
@@ -85,24 +78,27 @@ async function fetchFlightNumber() {
                 }
             }
 
-            // 6. Uppdatera Spotify-knappen
+            // Uppdatera Spotify-knappen
             if (spotifyBtn) {
                 if (data.playlist_url) {
                     spotifyBtn.href = data.playlist_url;
-                    spotifyBtn.style.display = "inline-flex"; // Visa knappen
+                    spotifyBtn.style.display = "inline-flex"; 
                 } else {
-                    spotifyBtn.style.display = "none"; // Dölj knappen
+                    spotifyBtn.style.display = "none"; 
                 }
             }
 
-            // 7. VISA RESULTATET (Viktigast!)
-            if (container) {
-                container.style.display = "block";
-                container.scrollIntoView({ behavior: 'smooth' });
+            // --- STEG 3: VISA RESULTATET ---
+            if (destinationContainer) {
+                destinationContainer.style.display = 'flex'; // Eller 'block', beroende på din CSS
+                destinationContainer.scrollIntoView({ behavior: 'smooth' });
             }
 
         } catch (error) {
             console.error('Något gick fel i frontend:', error);
+            // Om det kraschar helt måste vi ändå ta bort spinnern
+            if (spinner) spinner.style.display = 'none';
+            alert("Ett oväntat fel inträffade.");
         }
     })
 }
