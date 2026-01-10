@@ -82,7 +82,7 @@ function togglePanel(which) {
 function renderFacts(facts) {
   const extract = facts.extract ?? "No facts available.";
   const url = facts.wikipedia_url
-    ? `<a class="panel-link" href="${facts.wikipedia_url}" target="_blank" rel="noopener">Read more on Wikipedia</a>`
+    ? `<a class="panel-link" id="wiki-link" href="${facts.wikipedia_url}" target="_blank" rel="noopener">Read more on Wikipedia</a>`
     : "";
 
   factsPanel.innerHTML = `
