@@ -29,9 +29,6 @@ def root_index():
 def get_flight_info():
     data = request.get_json() 
     flight_number = data.get('flightNumber')
-    genres = data.get('genres', [])  # Hämta valda genrer från förfrågan
-    if not isinstance(genres, list):
-        genres = []
     
     print(f"Finding flight: {flight_number}")
 
@@ -78,7 +75,7 @@ def get_flight_info():
             print(f"Flight is going to: {city_name} ({iso_code})")
             
             # 3. Hämta artister
-            music_data = music_service.get_artists_by_country(iso_code, genres)
+            music_data = music_service.get_artists_by_country(iso_code)
 
             # 4. Hämta bild på staden (NYTT)
             if city_name and city_name != "Unknown City":
@@ -105,7 +102,7 @@ def get_flight_info():
             music_data, 
             flight_duration_minutes, 
             flight_number, 
-            iso_code
+            iso_code 
         )
 
     # Bygg svaret (Här kraschade din gamla kod för att variablerna inte fanns)

@@ -13,40 +13,13 @@ async function fetchFlightNumber() {
         const flightNumber = flightInput.value;
         console.log(`Söker efter: ${flightNumber}`);
 
-        const getSelectedGenres = () => {
-            return Array.from(document.querySelectorAll('input[name="genre"]:checked'))
-            .map(el => el.value);
-        };
-
-        const genres = getSelectedGenres();
-        console.log('Selected genres:', genres); // för debugging
-
         try {
-        const data = await fetcher('/get_flight_info', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                flightNumber: flightNumber,
-                genres: genres
-            })
-        });
-
-        console.log(data);
-
-        if (!data || data.error) {
-        console.warn("Flyget hittades inte eller något gick fel.");
-        // Visa meddelande till användaren (t.ex. i en div på skärmen)
-        console.log("Felmeddelande:", data ? data.error : "Okänt fel");
-        return; // AVBRYT HÄR så att vi inte kraschar längre ner
-    }
-
-        if(data.destination_country) {
-            console.log(`Destination Country: ${data.destination_country}`);
-        } else {
-            console.log('No destination country found.');
-        }
+            // 1. Hämta data från backend
+            const data = await fetcher('/get_flight_info', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ flightNumber: flightNumber })
+            });
 
             console.log("Data mottagen:", data);
 
