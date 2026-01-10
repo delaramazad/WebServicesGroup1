@@ -1,0 +1,98 @@
+openapi: 3.0.0
+info:
+  title: Espotifly API
+  description: >
+    Espotifly är en mashup-tjänst som kombinerar flygdata, geografisk information 
+    och musik för att skapa personliga rese-spellistor.
+  version: 1.0.0
+
+servers:
+  - url: http://127.0.0.1:8081
+    description: Lokal utvecklingsserver
+
+paths:
+  /get_flight_info:
+    post:
+      summary: Hämtar sammansatt flyg- och musikdata
+      description: Tar emot ett flygnummer och returnerar detaljer om flyget, destinationen och en länk till en nyskapad Spotify-spellista.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                flightNumber:
+                  type: string
+                  description: IATA-koden för flyget (t.ex. FM891).
+                  example: "FM891"
+      responses:
+        '200':
+          description: Data hämtades och spellista skapades framgångsrikt.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  flight:
+                    type: object
+                    description: Rådata från Aviationstack API.
+                  destination_country:
+                    type: string
+                    description: Namnet eller koden på destinationslandet.
+                  music_recommendations:
+                    type: array
+                    items:
+                      type: string
+                    description: Lista på artister hämtade från MusicBrainz.
+                  playlist_url:
+                    type: string
+                    description: URL till den genererade Spotify-spellistan.
+        '404':
+          description: Inga flygdata hittades för det angivna numret.
+
+/destination:
+    get:
+      summary: Visar destinationssidan för ett specifikt flyg
+      description: Renderar en HTML-sida med information om staden, landet och flygnumret för den valda destinationen.
+      parameters:
+        - name: flightNumber
+          in: query
+          required: true
+          description: Flygnumret som används för att hämta destinationsdata.
+          schema:
+            type: string
+          example: "FM891"
+      responses:
+        '200':
+          description: HTML-sidan för destinationen renderas och visas framgångsrikt.
+          content:
+            text/html:
+              schema:
+                type: string
+        '404':
+          description: Flyget hittades inte, eller så saknas data för det angivna numret.
+
+/:
+    get:
+      summary: Visar startsidan
+      description: Renderar landningssidan där användaren kan mata in sitt flygnummer.
+      responses:
+        '200':
+          description: Startsidan visas framgångsrikt.
+          content:
+            text/html:
+              schema:
+                type: string
+
+/about-us:
+    get:
+      summary: Visar information om projektet
+      description: Renderar en sida som beskriver projektet Espotifly och vilka API:er som används (Aviationstack, MusicBrainz, Spotify och Wikidata).
+      responses:
+        '200':
+          description: "Om oss"-sidan visas framgångsrikt.
+          content:
+            text/html:
+              schema:
+                type: string
