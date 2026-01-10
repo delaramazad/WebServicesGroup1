@@ -393,4 +393,7 @@ pyrightconfig.json
 .history
 .ionide
 
+# cache files
+.cache
+
 # End of https://www.toptal.com/developers/gitignore/api/intellij,visualstudiocode,python,flask
