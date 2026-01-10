@@ -95,6 +95,46 @@ def about_us_page():
     """Renders a general information page about the project."""
     return render_template("about.html")
 
+
+#################### DESTINNATION PAGE ###############
+
+@app.route("/destination")
+def destination_page():
+    # Hämta flygnumret från URL:en (t.ex. /destination?flightNumber=FM891)
+    flight_number = request.args.get('flightNumber')
+    
+    if not flight_number:
+        return render_template("index.html")
+
+    # 1. Hämta flygdata via din befintliga tjänst (från aviation_service.py)
+    flight_data = get_flight_data(flight_number)
+    if not flight_data:
+        return "Flyget hittades inte", 404
+
+    # 2. Hämta ankomstdata
+    arrival = flight_data.get('arrival', {})
+    arrival_iata = arrival.get('iata')
+    
+    # FÖRBÄTTRAD LOGIK FÖR STADSNAMN:
+    # Om API:et inte ger en stad, tar vi flygplatsnamnet och rensar bort 
+    # ord som "International" för att bild-tjänsten ska hitta rätt.
+    city_name = arrival.get('city')
+    if not city_name:
+        raw_airport = arrival.get('airport', "Unknown City")
+        city_name = raw_airport.replace("International", "").replace("Airport", "").strip()
+    
+    # 3. Hämta landskod (t.ex. HU eller SE) via din airport_service
+    country_display = "Unknown"
+    if arrival_iata:
+        iso_code = airport_service.get_country_code(arrival_iata)
+        if iso_code:
+            country_display = iso_code
+
+    # 4. Rendera destination.html med all insamlad data
+    return render_template("destination.html", 
+                           city=city_name, 
+                           country=country_display,
+                           flight_number=flight_number)
 # START SERVER LAST 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=8081, debug=True)
