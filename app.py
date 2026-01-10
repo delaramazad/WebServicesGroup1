@@ -31,7 +31,7 @@ def root_index():
 
 
 # ---------- Wikipedia helpers ----------
-def _http_get_json(url: str) -> dict | None:
+def _http_get_json(url: str):
     try:
         req = Request(
             url,

@@ -102,7 +102,6 @@ hr {
     opacity: 0.7;
 }
 
-/* Behållaren för alla genres */
 .checkbox-group {
     display: flex;
     flex-wrap: wrap; /* Viktigt! Låter knapparna radbrytas snyggt */

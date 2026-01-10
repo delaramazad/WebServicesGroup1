@@ -52,7 +52,6 @@
     display: none; /* Visas via JS när bild finns */
 }
 
-/* --- Button group --- */
 
 .button-group {
     display: flex;
@@ -73,6 +72,10 @@
   font-size: 16px;
   font-family: "PT Sans", sans-serif;
   text-align: left;
+
+  width: 300px;
+  max-width: 90%;
+  box-sizing: border-box;
 
   width: 100%;
   max-width: 320px;
