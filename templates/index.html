@@ -4,15 +4,15 @@
 <head>
     <meta charset="utf-8">
     <title>Espotifly</title>
+    
     <link href="/static/css/style.css" rel="stylesheet" type="text/css">
+    <link href="/static/css/styledestination.css" rel="stylesheet" type="text/css">
+    
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!--Library for search looking glass symbol-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <!--Font family link-->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-    
 </head>
 
 <body>
@@ -21,10 +21,9 @@
         <h1>Insert flight number</h1>
         <p>Choose your preferred genre and press search!</p>
         <hr>
-        <!--<img src="/static/images/h1-underline.png" id="h1-underline" alt="h1-underline">-->
+        
         <div class="search-container">
-            <form method="POST">
-                <div class="textbox-button-field">
+            <form> <div class="textbox-button-field">
                     <input type="text" placeholder="(eg. AA2730)" name="flightNumber" id="flightNumber">
                     <button type="submit"><i class="fa fa-search"></i></button>  
                 </div>
@@ -56,9 +55,32 @@
             <h3>Take your experience<br>to the next level</h3>
         </div>
     </div>
+
+    <div id="destination-container" style="display:none; margin-top: 50px; padding-bottom: 50px;">
+        
+        <div class="location-section">
+            <h2 class="location-title" id="location-title"></h2>
+            <div class="title-underline"></div>
+        </div>
+
+        <div class="destination-image-wrapper">
+            <img id="city-image" src="" alt="City view" class="city-preview" style="display:none; max-width: 80%; border-radius: 15px; margin: 0 auto;"> 
+        </div>
+
+        <div class="button-group" style="display: flex; justify-content: center; gap: 15px; margin-top: 20px;">
+            <a id="spotify-btn" class="btn-pill" href="#" target="_blank" style="display:none; text-decoration: none; align-items: center;">
+                <i class="fa fa-spotify"></i> Flight Playlist
+            </a>
+            
+            <button class="btn-pill"><i class="fa fa-camera"></i> Sights</button>
+            <button class="btn-pill"><i class="fa fa-info-circle"></i> Facts</button>
+        </div>
+    </div>
+
     <footer>
         <a href="/about-us">About espotiFly</a>
     </footer>
+
     <script type="module" src="/static/js/actionListener.js"></script>
 </body>
 </html>

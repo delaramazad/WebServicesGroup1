@@ -8,6 +8,8 @@ from services.aviation_service import get_flight_data
 from services.airport_service import AirportService
 from services.musicbrainz_service import MusicBrainzService
 from services.spotify_service import SpotifyService
+# VIKTIGT: Denna saknades!
+from services.wikimedia_service import WikimediaService 
 
 load_dotenv()
 
@@ -15,6 +17,7 @@ load_dotenv()
 airport_service = AirportService()
 music_service = MusicBrainzService()
 spotify_service = SpotifyService()
+wikimedia_service = WikimediaService() # VIKTIGT: Starta denna tjänst
 
 app = Flask(__name__)
 
@@ -41,21 +44,46 @@ def get_flight_info():
     arrival = flight_data.get('arrival', {})
     arrival_iata = arrival.get('iata')
     
+    # Initiera variabler så de inte kraschar om de är tomma
     country_display_name = "Unknown"
+    city_name = "Unknown City" # Standardvärde
+    image_url = None
     music_data = []
     playlist_url = None
     iso_code = None
 
-    # 2. Hämta Landskod (ISO)
+    # 2. Hämta Landskod OCH Stad
     if arrival_iata:
-        iso_code = airport_service.get_country_code(arrival_iata)
-        
+        # FÖRSÖK 1: Använd AirportService (Om du uppdaterat den filen)
+        try:
+            # OBS: Detta kräver att du har uppdaterat services/airport_service.py 
+            # enligt instruktionen tidigare!
+            iso_code, city_name_from_service = airport_service.get_location_info(arrival_iata)
+            
+            if iso_code:
+                country_display_name = iso_code
+            if city_name_from_service:
+                city_name = city_name_from_service
+
+        except AttributeError:
+            # Fallback: Om du har den GAMLA airport_service.py kvar
+            iso_code = airport_service.get_country_code(arrival_iata)
+            country_display_name = iso_code or "Unknown"
+            # Försök ta staden från flygdatan istället
+            city_from_flight = arrival.get('city')
+            if city_from_flight:
+                city_name = city_from_flight
+
         if iso_code:
-            print(f"Flight is going to country code: {iso_code}")
-            country_display_name = iso_code # Vi visar koden på hemsidan också
+            print(f"Flight is going to: {city_name} ({iso_code})")
             
             # 3. Hämta artister
             music_data = music_service.get_artists_by_country(iso_code, genres)
+
+            # 4. Hämta bild på staden (NYTT)
+            if city_name and city_name != "Unknown City":
+                # Använd wikimedia-tjänsten
+                image_url = wikimedia_service.get_city_image(city_name)
         else:
             print(f"Ingen landskod hittades för: {arrival_iata}")
 
@@ -71,10 +99,8 @@ def get_flight_info():
     except Exception as e:
         print(f"Tidsberäkning misslyckades: {e}")
 
-    # 4. Skapa Spellista
+    # 5. Skapa Spellista
     if music_data and iso_code:
-        # Här skickar vi 'iso_code' som sista parameter!
-        # Då blir namnet: "Espotifly [FLYGNR] to [SE]"
         playlist_url = spotify_service.create_flight_playlist(
             music_data, 
             flight_duration_minutes, 
@@ -82,9 +108,12 @@ def get_flight_info():
             iso_code
         )
 
+    # Bygg svaret (Här kraschade din gamla kod för att variablerna inte fanns)
     response_data = {
         "flight": flight_data,
         "destination_country": country_display_name,
+        "destination_city": city_name, # Nu är denna definierad!
+        "city_image": image_url,       # Vi döper nyckeln till city_image för att matcha JS
         "music_recommendations": music_data,
         "playlist_url": playlist_url
     }
@@ -92,10 +121,8 @@ def get_flight_info():
     return jsonify(response_data)
 
 ##################### ABOUT US PAGE #######################
-
 @app.route("/about-us")
 def about_us_page():
-    """Renders a general information page about the project."""
     return render_template("about.html")
 
 # START SERVER LAST 
