@@ -51,28 +51,6 @@ paths:
         '404':
           description: Inga flygdata hittades för det angivna numret.
 
-/destination:
-    get:
-      summary: Visar destinationssidan för ett specifikt flyg
-      description: Renderar en HTML-sida med information om staden, landet och flygnumret för den valda destinationen.
-      parameters:
-        - name: flightNumber
-          in: query
-          required: true
-          description: Flygnumret som används för att hämta destinationsdata.
-          schema:
-            type: string
-          example: "FM891"
-      responses:
-        '200':
-          description: HTML-sidan för destinationen renderas och visas framgångsrikt.
-          content:
-            text/html:
-              schema:
-                type: string
-        '404':
-          description: Flyget hittades inte, eller så saknas data för det angivna numret.
-
 /:
     get:
       summary: Visar startsidan

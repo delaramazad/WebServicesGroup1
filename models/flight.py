@@ -1,1 +1,0 @@
-#hanterar datan vi bryr oss om från Aviationstack, sparar det vi behöver
