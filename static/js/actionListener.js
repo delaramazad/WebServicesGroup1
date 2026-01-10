@@ -8,53 +8,41 @@ async function fetchFlightNumber() {
         const flightInput = document.getElementById('flightNumber');
         const flightNumber = flightInput.value;
 
-        console.log(flightNumber);
-
         try {
-        const data = await fetcher('/get_flight_info', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ flightNumber: flightNumber })
-        });
+            const data = await fetcher('/get_flight_info', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ flightNumber: flightNumber })
+            });
 
-        console.log(data);
-
-        if (!data || data.error) {
-        console.warn("Flyget hittades inte eller något gick fel.");
-        // Visa meddelande till användaren (t.ex. i en div på skärmen)
-        console.log("Felmeddelande:", data ? data.error : "Okänt fel");
-        return; // AVBRYT HÄR så att vi inte kraschar längre ner
-    }
-
-        if(data.destination_country) {
-            console.log(`Destination Country: ${data.destination_country}`);
-        } else {
-            console.log('No destination country found.');
-        }
-
-        if(data.music_recommendations && data.music_recommendations.length > 0) {
-            console.log(`Music Recommendations: ${data.music_recommendations.length}` + ' artists found.');
-        } 
-
-        // --- NYTT: VISA LÄNKEN ---
-        if (data.playlist_url) {
-            console.log("Spellista skapad:", data.playlist_url);
+            // --- HÄR BÖRJAR ÄNDRINGEN ---
             
-            // Exempel på hur du kan öppna den direkt eller visa en länk
-            // window.open(data.playlist_url, '_blank'); 
+            // Kolla om vi fick giltig data (ingen error)
+            if (data && !data.error) {
+                console.log("Flyg hittat, skickar vidare till destination...");
+                
+                // Gamla kod för att se loggarna i konsolen först
+                if(data.destination_country) {
+                    console.log(`Destination Country: ${data.destination_country}`);
+                }
+
+                // Den sista delen som gör att sidan faktiskt byts:
+                window.location.href = `/destination?flightNumber=${flightNumber}`;
+                
+            } else {
+                // Om något gick fel (t.ex. fel flygnummer)
+                console.warn("Felmeddelande:", data ? data.error : "Okänt fel");
+                alert("Kunde inte hitta flyget. Kontrollera flygnumret och försök igen.");
+            }
             
-            // Eller logga den tydligt:
-            console.log("Klicka här för att lyssna: " + data.playlist_url);
-        } else {
-            console.log("Ingen spellista kunde skapas.");
-        }
+            // --- HÄR SLUTAR ÄNDRINGEN ---
+
         } catch (error) {
             console.error('Error fetching flight info:', error);
         }
     })
-  
 }
 
 fetchFlightNumber();

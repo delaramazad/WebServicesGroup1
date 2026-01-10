@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Destination - Espotifly</title>
+    <link href="/static/css/styledestination.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body class="destination-body">
+    <div id="destination-container">
+        <header class="destination-header">
+            <span class="logo-text">espotifly</span>
+            <img src="/static/images/bibble.png" class="bibble-icon" alt="bibble">
+        </header>
+
+        <div class="location-section">
+            <h2 class="location-title">{{ city }}, {{ country }}</h2>
+            <div class="title-underline"></div>
+        </div>
+
+        <div class="destination-image-wrapper">
+
+            <img src="https://loremflickr.com/400/300/{{ city|urlencode }},cityscape" alt="{{ city }}" class="city-preview">
+        </div>
+
+        <div class="button-group">
+            <button class="btn-pill"><i class="fa fa-star"></i> Top 50 Playlist</button>
+            <button class="btn-pill"><i class="fa fa-star"></i> Sights</button>
+            <button class="btn-pill"><i class="fa fa-star"></i> Facts</button>
+        </div>
+    </div>
+</body>
+</html>
