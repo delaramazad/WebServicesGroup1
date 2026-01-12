@@ -49,8 +49,16 @@ SPOTIFY_REDIRECT_URI=http://127.0.0.1:8081
 *These credentials are to be obtained separately from the group to maintain the security of the credentials. They must be manually switched out by the user to the correct credentials in order for the program to function. Please see the attached document titled "ENV INFO".*
 
 4. Kör aplikationen:
-python app.py
+python app.py i terminalen 
+Appen startar på http://127.0.0.1:8081 by holding the Ctrl button and clicking on it with your mouse.
 
-Appen startar på http://127.0.0.1:8081
+alternativt 
 
-# Run the program by navigating to the "app.py" file in Visual Studio Code and pressing "Run Python file", thereafter observe the command-box at the bottom of the screen in the same program, and open the link: "http://localhost:8090/" by holding the Ctrl button and clicking on it with your mouse.
+py app.py i terminalen
+Appen startar på http://127.0.0.1:8081 by holding the Ctrl button and clicking on it with your mouse.
+
+alternativt
+
+Run the program by navigating to the "app.py" file in Visual Studio Code and pressing "Run Python file", thereafter observe the command-box at the bottom of the screen in the same program, and open the link: "http://localhost:8090/"  
+
+Appen startar på http://127.0.0.1:8081 by holding the Ctrl button and clicking on it with your mouse.

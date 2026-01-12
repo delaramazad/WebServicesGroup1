@@ -19,7 +19,7 @@ class SpotifyService:
         ))
 
     def create_flight_playlist(self, artists, flight_duration_minutes, flight_number, country_name):
-        # 1. BESTÄM LÄNGD: Alltid 5 timmar (300 minuter)
+        # Fixed lenght: always 5 hours (300 minutes)
         fixed_hours = 5
         target_duration_ms = fixed_hours * 60 * 60 * 1000
         
@@ -29,12 +29,12 @@ class SpotifyService:
         track_uris = [] 
         
         for artist_name in artists:
-            # Har vi fyllt 5 timmar än?
+            # Checks if 5 hours has been filled
             if current_duration_ms >= target_duration_ms:
                 break
                 
             try:
-                # Sök artist
+                # search for artist
                 results = self.sp.search(q='artist:' + artist_name, type='artist', limit=1)
                 items = results['artists']['items']
                 if not items: continue 
@@ -44,11 +44,11 @@ class SpotifyService:
                 
                 added_count = 0
                 for track in top_tracks['tracks']:
-                    # VIKTIGT: Öka gränsen så vi hinner fylla 5 timmar!
-                    # Om vi tar max 10 låtar per artist behöver vi färre artister totalt.
+                    # Increase limit so we make sure to fill 5 hours!
+                    # if we take maximum 10 songs per artist we need less artists in total
                     if added_count >= 10: break 
                     
-                    # Undvik dubbletter
+                    # Avoid duplicates
                     if track['uri'] in track_uris: continue
 
                     track_uris.append(track['uri'])
@@ -60,7 +60,7 @@ class SpotifyService:
             except Exception as e:
                 print(f"Fel med artist {artist_name}: {e}")
 
-        # 2. SKAPA SPELLISTAN
+        # Create the playlist
         if not track_uris:
             print("Inga låtar hittades.")
             return None 
@@ -68,12 +68,12 @@ class SpotifyService:
         try:
             user_id = self.sp.me()['id']
             
-            # Namnet blir snyggt: "Espotifly SK123 to SE"
+            # Format the name to look nice and tidy: "Espotifly SK123 to SE"
             playlist_name = f"Espotifly {flight_number} to {country_name}"
             new_playlist = self.sp.user_playlist_create(user_id, playlist_name, public=True)
             
-            # Spotify tillåter max 100 låtar per anrop. 
-            # 5 timmar musik kan vara mer än 100 låtar, så vi delar upp det i bitar (chunks).
+            # Spotify allows maimum 100 songs per fetch 
+            # 5 hours of music could be more than 100 songs, so we divide it into chunks.
             for i in range(0, len(track_uris), 100):
                 chunk = track_uris[i:i + 100]
                 self.sp.playlist_add_items(new_playlist['id'], chunk)

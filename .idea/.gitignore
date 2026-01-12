@@ -1,23 +1,23 @@
-# --- PyCharm / IntelliJ (Ignorera inställningar) ---
+# PyCharm / IntelliJ (Ignore Settings)
 .idea/
 *.iml
 *.iws
 *.ipr
 
-# --- VS Code (Ignorera inställningar) ---
+# VS Code (Ignore Settings)
 .vscode/
 
-# --- Python (Ignorera kompilator-filer) ---
+# Python (Ignore compiler-files)
 __pycache__/
 *.py[cod]
 
-# --- Virtuell Miljö (Ignorera mappen venv) ---
+# Virtual environment (Ignore the map venv)
 venv/
 .venv/
 env/
 
-# --- Mac OS (Ignorera systemfiler) ---
+# Mac OS (Ignore systemfiles)
 .DS_Store
 
-# --- Hemligheter (VIKTIGT! Ladda aldrig upp nycklar) ---
+# SECRETS (IMPORTANT! To avoid uploading keys) 
 .env

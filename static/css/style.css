@@ -1,4 +1,4 @@
-/* --- style.css --- */
+
 body {
     background-image: url("/static/images/landing.png");
     background-repeat: no-repeat;
@@ -104,46 +104,46 @@ hr {
 
 .checkbox-group {
     display: flex;
-    flex-wrap: wrap; /* Viktigt! Låter knapparna radbrytas snyggt */
+    flex-wrap: wrap; /* Makes the buttons wrap smoothly into a new row to look better */
     justify-content: center;
-    gap: 10px; /* Mellanrum mellan knapparna */
+    gap: 10px; /* space between the buttons */
     margin-top: 15px;
     width: 100%;
 }
 
-/* Dölj den vanliga fula checkbox-rutan helt */
+/* Hide the original checkbox (ugly) */
 .checkbox-group input[type="checkbox"] {
     display: none;
 }
 
-/* Styla texten/etiketten så den ser ut som en knapp */
+/* Style the text/lable so it looks more like a button than a checkbox */
 .checkbox-labels {
     display: inline-block;
     padding: 8px 15px;
-    background-color: rgba(255, 255, 255, 0.1); /* Genomskinlig bakgrund */
+    background-color: rgba(255, 255, 255, 0.1); /* transparent background */
     border: 1px solid rgb(255, 195, 230);
-    border-radius: 20px; /* Runda hörn */
+    border-radius: 20px;
     color: rgb(246, 233, 241);
     font-size: 14px;
     cursor: pointer;
-    transition: all 0.3s ease; /* Mjuk animation */
-    user-select: none; /* Gör att man inte markerar texten när man klickar snabbt */
+    transition: all 0.3s ease; /* smooth animation */
+    user-select: none; /* makes sure that the user doesn't accidentally mark the text when clicking */
 }
 
-/* Hover-effekt (när man håller musen över) */
+/* Hover-effect */
 .checkbox-labels:hover {
     background-color: rgba(255, 195, 230, 0.2);
     border-color: #fff;
     color: #fff;
 }
 
-/* VIKTIGT: Detta händer när man klickar (när checkboxen är "checked") */
+/* IMPORTANT: This happens when user clicks and the checkbox is "checked" */
 .checkbox-group input[type="checkbox"]:checked + label {
-    background-color: #484396; /* Din lila färg (eller använd rosa #d63384) */
+    background-color: #484396; /* Making the background a purple colour */
     border-color: #484396;
     color: white;
-    transform: scale(1.05); /* Knappen växer lite för att visa att den är vald */
-    box-shadow: 0 0 10px rgba(72, 67, 150, 0.5); /* Snyggt glow */
+    transform: scale(1.05); /* button "grows" a little to enhance that is has been chosen */
+    box-shadow: 0 0 10px rgba(72, 67, 150, 0.5); /* Nice glow B) */
 }
 
 .textbox-button-field button[type=submit] {
@@ -160,7 +160,7 @@ hr {
 
 /* Spinner styling */
 #loading-spinner {
-    display: none; /* Dold, visas via JS */
+    display: none; /* Hidden, visible through Javascript */
     text-align: center;
     margin-top: 30px;
     color: rgb(255, 195, 230);
@@ -206,7 +206,7 @@ p {
     text-align: center;
 }
 
-/* Mobil-anpassning */
+/* Responsive webbpage */
 @media screen and (max-width: 650px) {
     body {
         background-size: auto;

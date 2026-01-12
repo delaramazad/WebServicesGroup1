@@ -1,2 +1,1 @@
-
-#denna ska vara tom, men den behövs för att python ska förstå att mappen är ett "paket" som går att importera från??
+#this should be empty, but is needed for python to be able to understand that the map is a "package" that make the map accessible to import from. 
