@@ -115,63 +115,52 @@ def get_wikipedia_sights(city: str, limit: int = 8) -> dict:
 
 
 # ---------- Main API ----------
-@app.route('/get_flight_info', methods=['POST'])
-def get_flight_info():
-    data = request.get_json()
-    flight_number = data.get('flightNumber')
-    genres = data.get('genres', [])
-    if not isinstance(genres, list):
-        genres = []
+@app.route('/api/flights/<flight_number>', methods=['GET'])
+def get_flight_info(flight_number):
+    # (Vi hämtar inte längre genres här eftersom GET bara hämtar data)
+    print(f"Fetching data for flight: {flight_number}")
 
-    print(f"Finding flight: {flight_number}")
-
-    # 1. Hämta flygdata
     flight_data = get_flight_data(flight_number)
     if not flight_data:
         return jsonify({"error": "No flight data found"}), 404
 
-    # Hämta ankomst-IATA
     arrival = flight_data.get('arrival', {})
     arrival_iata = arrival.get('iata')
 
-    # Initiera variabler
     country_display_name = "Unknown"
     city_name = "Unknown City"
     image_url = None
-    music_data = []
-    playlist_url = None
     iso_code = None
 
-    # 2. Hämta Landskod OCH Stad
     if arrival_iata:
-        try:
-            iso_code, city_name_from_service = airport_service.get_location_info(arrival_iata)
+        iso_code, city_name_from_service = airport_service.get_location_info(arrival_iata)
+        country_display_name = iso_code or "Unknown"
+        city_name = city_name_from_service or arrival.get('city') or "Unknown City"
 
-            if iso_code:
-                country_display_name = iso_code
-            if city_name_from_service:
-                city_name = city_name_from_service
+        if city_name and city_name != "Unknown City":
+            image_url = wikimedia_service.get_city_image(city_name)
 
-        except AttributeError:
-            iso_code = airport_service.get_country_code(arrival_iata)
-            country_display_name = iso_code or "Unknown"
-            city_from_flight = arrival.get('city')
-            if city_from_flight:
-                city_name = city_from_flight
+    # Vi returnerar data, men ingen spellista än!
+    return jsonify({
+        "flight": flight_data,
+        "destination_country": country_display_name,
+        "destination_city": city_name,
+        "city_image": image_url,
+        "iso_code": iso_code # Vi skickar med iso_code så frontend kan använda den sen
+    })
 
-        if iso_code:
-            print(f"Flight is going to: {city_name} ({iso_code})")
-
-            # 3. Hämta artister
-            music_data = music_service.get_artists_by_country(iso_code, genres)
-
-            # 4. Hämta bild på staden
-            if city_name and city_name != "Unknown City":
-                image_url = wikimedia_service.get_city_image(city_name)
-        else:
-            print(f"Ingen landskod hittades för: {arrival_iata}")
-
-    # --- Beräkna flygtid ---
+# NY ENDPOINT: Skapar resursen 'playlist'
+@app.route('/api/flights/<flight_number>/playlists', methods=['POST'])
+def create_flight_playlist(flight_number):
+    data = request.get_json()
+    genres = data.get('genres', [])
+    iso_code = data.get('iso_code')
+    
+    # Här kan vi behöva hämta flygdatan igen eller lita på frontends info
+    # För enkelhetens skull kör vi skapandet här:
+    flight_data = get_flight_data(flight_number)
+    
+    # Beräkna flygtid (samma logik som förut)
     flight_duration_minutes = 120
     try:
         dep_str = flight_data.get('departure', {}).get('scheduled')
@@ -180,41 +169,26 @@ def get_flight_info():
             dep_time = datetime.fromisoformat(dep_str.replace("Z", "+00:00"))
             arr_time = datetime.fromisoformat(arr_str.replace("Z", "+00:00"))
             flight_duration_minutes = (arr_time - dep_time).total_seconds() / 60
-    except Exception as e:
-        print(f"Tidsberäkning misslyckades: {e}")
+    except: pass
 
-    # 5. Skapa Spellista
-    if music_data and iso_code:
-        playlist_url = spotify_service.create_flight_playlist(
-            music_data,
-            flight_duration_minutes,
-            flight_number,
-            iso_code
-        )
+    music_data = music_service.get_artists_by_country(iso_code, genres)
+    playlist_url = spotify_service.create_flight_playlist(
+        music_data, flight_duration_minutes, flight_number, iso_code
+    )
 
-    response_data = {
-        "flight": flight_data,
-        "destination_country": country_display_name,
-        "destination_city": city_name,
-        "city_image": image_url,
-        "music_recommendations": music_data,
-        "playlist_url": playlist_url
-    }
-
-    return jsonify(response_data)
+    # REST-standard: Returnera 201 Created när en resurs har skapats
+    return jsonify({"playlist_url": playlist_url}), 201
 
 
 # ---------- Facts & Sights API ----------
-@app.route("/api/city/facts")
-def city_facts():
-    city = request.args.get("city", "").strip()
-    return jsonify(get_wikipedia_summary(city))
+# Vi gör staden till en del av sökvägen (path parameter)
+@app.route("/api/cities/<city_name>/facts")
+def city_facts(city_name):
+    return jsonify(get_wikipedia_summary(city_name))
 
-
-@app.route("/api/city/sights")
-def city_sights():
-    city = request.args.get("city", "").strip()
-    return jsonify(get_wikipedia_sights(city))
+@app.route("/api/cities/<city_name>/sights")
+def city_sights(city_name):
+    return jsonify(get_wikipedia_sights(city_name))
 
 
 ##################### ABOUT US PAGE #######################
