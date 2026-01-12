@@ -1,8 +1,8 @@
+/* Abouts us section */
 body {
-    /* Ta bort alla background-rader härifrån! */
     font-family: "PT Sans", sans-serif;
     
-    /* Detta behövs för att innehållet ska fungera bra med lagret bakom */
+    /* Needed for the content to work well with the layer behind */
     position: relative;
     min-height: 100vh;
 }
@@ -10,7 +10,7 @@ body {
 
 body::before {
     content: "";
-    position: fixed; /* Låser bakgrunden så den täcker hela fönstret */
+    position: fixed; /* Locks the background so it covers the users screen fully */
     top: 0;
     left: 0;
     width: 100%;
@@ -22,7 +22,7 @@ body::before {
     background-position: center;
     
     filter: blur(8px);
-    /* Lägg detta lager BAKOM texten */
+    /* This layer ends up behind the text */
     z-index: -1;
 
     transform: scale(1.1);
@@ -126,7 +126,7 @@ p {
     padding-left: 40px;
     padding-right: 40px;
 }
-
+/* Responsive webbpage */
 @media screen and (width <= 650px) {
     body{
         background-size:auto;

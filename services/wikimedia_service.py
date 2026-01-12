@@ -6,14 +6,14 @@ class WikimediaService:
         if not city_name:
             return None
             
-        # Vi söker på engelska Wikipedia API för bilder
+        # Search on english version wikipedia API for pictures. 
         url = "https://en.wikipedia.org/w/api.php"
         
         params = {
             "action": "query",
             "format": "json",
             "prop": "pageimages",
-            "piprop": "original", # Vi vill ha originalbilden (hög kvalitet)
+            "piprop": "original", # specifies that we want the original picture with high quality
             "titles": city_name,
             "pithumbsize": 1000
         }
@@ -25,7 +25,7 @@ class WikimediaService:
             response = requests.get(url, params=params, headers=headers, timeout=5)
             data = response.json()
             
-            # Wikipedia returnerar datan lite nästlat, vi måste gräva
+            # Wikipedia returns the data nested and we look for the image URL
             pages = data.get("query", {}).get("pages", {})
             
             for page_id, page_data in pages.items():

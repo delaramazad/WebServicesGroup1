@@ -1,21 +1,21 @@
-/* --- Destination section --- */
+/* Destination section */
 
 #destination-container {
     width: 100%;
     max-width: 500px;
-    /* Flex hanteras via toggle i JS, men vi sätter grundstilen här */
+    /* Flex is handeled through javascript but we set the foundation styling here */
     flex-direction: column;
     align-items: center;
-    margin: 30px auto 0 auto; /* Centrerad med margin auto */
+    margin: 30px auto 0 auto; /* Centered with margin auto */
     padding-bottom: 50px;
     
-    /* Standardläge: Dold */
+    /* Standard: Dold */
     display: none; 
     
     opacity: 0; 
     animation: fadeIn 1s forwards;
 }
-
+/* Animation defining fadeIn */
 @keyframes fadeIn {
   to { opacity: 1; }
 }
@@ -42,20 +42,20 @@
 
 #city-image {
     width: 100%;
-    max-width: 80%; /* Flyttad från inline */
+    max-width: 80%; 
     height: auto;
     min-height: 200px;
     object-fit: cover;
-    border-radius: 15px; /* Flyttad från inline */
-    margin: 0 auto;      /* Flyttad från inline */
+    border-radius: 15px; 
+    margin: 0 auto;     
     box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-    display: none; /* Visas via JS när bild finns */
+    display: none; /*  Visible through javascript when picture is avaliable */
 }
 
 
 .button-group {
     display: flex;
-    flex-direction: column; /* Staplar knappar vertikalt */
+    flex-direction: column; /* stacks buttons vertically */
     justify-content: center;
     align-items: center;
     gap: 15px;
@@ -90,9 +90,9 @@
   text-decoration: none;
 }
 
-/* Specifikt för spotify-knappen som är en <a> tagg */
+/* Specifically for the spotify button (<a> tag) */
 #spotify-btn {
-    display: none; /* Dold tills länk finns */
+    display: none; /* Hidden untikl a link is avaliable  */
 }
 
 .btn-pill:hover {
@@ -104,7 +104,7 @@
   font-size: 1.2em;
 }
 
-/* --- Accordion panels (Facts + Sights) --- */
+/* Accordion panels (Facts + Sights) */
 
 .accordion-panel {
   width: 100%;
@@ -160,7 +160,7 @@
   color: #ffffff;
 }
 
-/* Mobile tweaks */
+/* Responsive tweaks */
 @media (max-width: 650px) {
   #destination-container {
     max-width: 95%;

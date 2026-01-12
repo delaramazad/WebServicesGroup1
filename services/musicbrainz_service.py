@@ -83,12 +83,12 @@ class MusicBrainzService:
         iso_code = (iso_code or "").upper().strip()
         user_tags = self._normalize_genres(genres)
 
-        # 1) Kör ENBART på user tags först (så genre faktiskt gör skillnad)
+        # if user_tags exist run try to make sure genre actually makes a difference
         if user_tags:
             try:
                 artists = self._mb_search(iso_code, user_tags, limit=120)
                 if artists:
-                    # genre-styrd ordning => Spotify tar olika artister tidigt => olika låtar
+                    # genre-controlled order -> Spotify includes different artists early -> differnt songs
                     artists = self._stable_shuffle(artists, f"{iso_code}|{','.join(sorted(user_tags))}")
                     return artists[:40]
                 else:
@@ -96,7 +96,7 @@ class MusicBrainzService:
             except Exception as e:
                 print(f"Kunde inte nå MusicBrainz API (user tags): {e}")
 
-        # 2) Fallback: default tags
+        # Fallback: default tags
         try:
             artists = self._mb_search(iso_code, self.DEFAULT_TAGS, limit=120)
             if artists:

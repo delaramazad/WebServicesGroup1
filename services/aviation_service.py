@@ -6,7 +6,7 @@ load_dotenv()
 
 def get_flight_data(flight_number):
     api_key = os.getenv("AVIATION_API_KEY")
-    # Vi tar bort offset, limit 100 räcker
+    # We remove offset, limit: 100 
     base_url = f"https://api.aviationstack.com/v1/flights?access_key={api_key}&limit=100&flight_iata={flight_number}"
     
     try:
@@ -14,16 +14,16 @@ def get_flight_data(flight_number):
         json_response = response.json()
 
         if 'data' in json_response and len(json_response['data']) > 0:
-            # --- NY LOGIK: Hitta bästa datan ---
+            # Find the best data
             
-            # 1. Försök hitta en rad som faktiskt har en IATA-kod för ankomst
+            # Try to find a row that actually has an IATA code for arrival
             for flight in json_response['data']:
                 arrival = flight.get('arrival')
                 if arrival and arrival.get('iata'):
                     print(f"Hittade flygdata MED IATA: {arrival.get('iata')}")
                     return flight
             
-            # 2. Om ingen har IATA, returnera den första ändå (vi får lita på namnsökning)
+            # If no IATA avaliable, return the first anyways (vi rely on the namesearch)
             print("Ingen IATA hittades, returnerar första träffen.")
             return json_response['data'][0] 
             

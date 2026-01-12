@@ -1,6 +1,6 @@
 import { fetcher } from './fetcher.js';
 
-// ---------- DOM Elements ----------
+// DOM Elements 
 const form = document.getElementById('search-form');
 const flightInput = document.getElementById('flightNumber');
 const emptyP = document.getElementById('empty-p');
@@ -20,14 +20,14 @@ const sightsBtn = document.getElementById('sights-btn');
 const factsPanel = document.getElementById('facts-panel');
 const sightsPanel = document.getElementById('sights-panel');
 
-// ---------- State (Minne för appen) ----------
+// State (Memory for app)
 const state = {
   city: null,
   open: null, // "facts" | "sights" | null
   cache: { facts: null, sights: null }
 };
 
-// ---------- Helpers ----------
+// Helpers
 function getSelectedGenres() {
   return Array.from(document.querySelectorAll('input[name="genre"]:checked'))
     .map(el => el.value);
@@ -78,7 +78,7 @@ function togglePanel(which) {
   }
 }
 
-// ---------- Render Functions ----------
+// Render Functions
 function renderFacts(facts) {
   const extract = facts.extract ?? "No facts available.";
   const url = facts.wikipedia_url
@@ -115,7 +115,7 @@ function renderSights(sights) {
   `;
 }
 
-// ---------- API Loaders (Facts/Sights) ----------
+// API Loaders (Facts/Sights)
 async function loadFactsIfNeeded() {
   if (state.cache.facts) {
     renderFacts(state.cache.facts);
@@ -150,12 +150,12 @@ async function loadSightsIfNeeded() {
   }
 }
 
-// ---------- MAIN EVENT: SEARCH FORM ----------
+// MAIN EVENT: SEARCH FORM
 if (form) {
     form.addEventListener("submit", async (event) => {
         event.preventDefault();
 
-        // Rensa gamla felmeddelanden
+        // Clear previous error messages
         if (emptyP) emptyP.textContent = "";
 
         const flightNumber = (flightInput.value || "").trim();
@@ -166,18 +166,18 @@ if (form) {
 
         const genres = getSelectedGenres();
 
-        // 1. VISA SPINNER & DÖLJ RESULTAT
+        // Show spinner and hide result
         if (spinner) {
             spinner.style.display = 'block';
             spinner.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
         if (destinationContainer) destinationContainer.style.display = 'none';
         
-        // Rensa gamla paneler (viktigt om man söker igen)
+        // Clear previous panels (important if user makes a new search)
         resetPanels();
 
         try {
-            // API ANROP
+            // API fetch
             const data = await fetcher('/get_flight_info', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -220,9 +220,9 @@ if (form) {
                 }
             }
 
-            // 4. VISA RESULTAT
+            // Show result
             if (destinationContainer) {
-                destinationContainer.style.display = "flex"; // Använder flexbox för styling
+                destinationContainer.style.display = "flex"; // Uses flexbox to display nice styling
                 destinationContainer.scrollIntoView({ behavior: 'smooth' });
             }
 
@@ -234,10 +234,10 @@ if (form) {
     });
 }
 
-// ---------- BUTTON EVENTS (Facts & Sights) ----------
+// BUTTON EVENTS (Facts & Sights)
 if (factsBtn) {
     factsBtn.addEventListener("click", async () => {
-        if (!state.city) return; // Gör inget om vi inte har en stad än
+        if (!state.city) return; // Do nothing if we dont have a city yet
         togglePanel("facts");
         if (state.open === "facts") {
             await loadFactsIfNeeded();
