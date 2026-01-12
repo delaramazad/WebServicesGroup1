@@ -173,7 +173,7 @@ if (form) {
         }
         if (destinationContainer) destinationContainer.style.display = 'none';
         
-        // Clear previous panels gamla paneler
+        // Clear previous panels
         resetPanels();
 
         try {
@@ -210,7 +210,7 @@ if (form) {
                 }
             }
 
-            // show containern so that user can see city while playlist it being created
+            // show container so that user can see city while playlist it being created
             if (destinationContainer) {
                 destinationContainer.style.display = "flex";
                 destinationContainer.scrollIntoView({ behavior: 'smooth' });

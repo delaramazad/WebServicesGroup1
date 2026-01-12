@@ -88,7 +88,7 @@ class MusicBrainzService:
             try:
                 artists = self._mb_search(iso_code, user_tags, limit=120)
                 if artists:
-                    # genre-controlled order -> Spotify includes different artists early -> differnt songs
+                    # genre-controlled order -> Spotify includes different artists early -> different songs
                     artists = self._stable_shuffle(artists, f"{iso_code}|{','.join(sorted(user_tags))}")
                     return artists[:40]
                 else:
