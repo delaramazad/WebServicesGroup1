@@ -173,11 +173,11 @@ if (form) {
         }
         if (destinationContainer) destinationContainer.style.display = 'none';
         
-        // Rensa gamla paneler
+        // Clear previous panels gamla paneler
         resetPanels();
 
         try {
-            // STEG 1: HÄMTA FLYGINFO (RESTful GET)
+            // Get Flight info (RESTful GET)
             const flightData = await fetcher(`/api/flights/${encodeURIComponent(flightNumber)}`, {
                 method: 'GET'
             });
@@ -188,7 +188,7 @@ if (form) {
                 return;
             }
 
-            // Uppdatera UI med flyginformation direkt (vi väntar inte på spellistan för detta)
+            // Update UI with flight info directly (we dont await playlist for this)
             const city = flightData.destination_city || "Unknown City";
             const country = flightData.destination_country || "Unknown Country";
             state.city = city;
@@ -210,14 +210,14 @@ if (form) {
                 }
             }
 
-            // Visa containern så användaren ser staden medan spellistan skapas
+            // show containern so that user can see city while playlist it being created
             if (destinationContainer) {
                 destinationContainer.style.display = "flex";
                 destinationContainer.scrollIntoView({ behavior: 'smooth' });
             }
 
-            // STEG 2: SKAPA SPELLISTA (RESTful POST)
-            // Vi skickar genres och iso_code i bodyn enligt REST-praxis
+            // Create playlist (RESTful POST)
+            // We send genres and iso_code in body according to REST- best practises.
             const playlistData = await fetcher(`/api/flights/${encodeURIComponent(flightNumber)}/playlists`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -227,10 +227,10 @@ if (form) {
                 })
             });
 
-            // Göm spinner när allt är klart
+            // hide spinner when everything is done
             if (spinner) spinner.style.display = 'none';
 
-            // Uppdatera Spotify-knappen om vi fick en länk
+            // update spotify button if we got a link 
             if (spotifyBtn && playlistData && playlistData.playlist_url) {
                 spotifyBtn.href = playlistData.playlist_url;
                 spotifyBtn.style.display = "inline-flex";
@@ -247,7 +247,7 @@ if (form) {
 }
 
 
-// ---------- BUTTON EVENTS (Facts & Sights) ----------
+// BUTTON EVENTS (Facts & Sights)
 if (factsBtn) {
     factsBtn.addEventListener("click", async () => {
         if (!state.city) return; // Do nothing if we dont have a city yet
