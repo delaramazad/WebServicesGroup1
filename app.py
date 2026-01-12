@@ -117,7 +117,6 @@ def get_wikipedia_sights(city: str, limit: int = 8) -> dict:
 # ---------- Main API ----------
 @app.route('/api/flights/<flight_number>', methods=['GET'])
 def get_flight_info(flight_number):
-    # (Vi hämtar inte längre genres här eftersom GET bara hämtar data)
     print(f"Fetching data for flight: {flight_number}")
 
     flight_data = get_flight_data(flight_number)
@@ -140,27 +139,23 @@ def get_flight_info(flight_number):
         if city_name and city_name != "Unknown City":
             image_url = wikimedia_service.get_city_image(city_name)
 
-    # Vi returnerar data, men ingen spellista än!
+    # We return data, but no playlist yet!
     return jsonify({
         "flight": flight_data,
         "destination_country": country_display_name,
         "destination_city": city_name,
         "city_image": image_url,
-        "iso_code": iso_code # Vi skickar med iso_code så frontend kan använda den sen
+        "iso_code": iso_code # We send iso_code so the frontend can use it later
     })
 
-# NY ENDPOINT: Skapar resursen 'playlist'
 @app.route('/api/flights/<flight_number>/playlists', methods=['POST'])
 def create_flight_playlist(flight_number):
     data = request.get_json()
     genres = data.get('genres', [])
     iso_code = data.get('iso_code')
     
-    # Här kan vi behöva hämta flygdatan igen eller lita på frontends info
-    # För enkelhetens skull kör vi skapandet här:
     flight_data = get_flight_data(flight_number)
     
-    # Beräkna flygtid (samma logik som förut)
     flight_duration_minutes = 120
     try:
         dep_str = flight_data.get('departure', {}).get('scheduled')
@@ -176,12 +171,15 @@ def create_flight_playlist(flight_number):
         music_data, flight_duration_minutes, flight_number, iso_code
     )
 
-    # REST-standard: Returnera 201 Created när en resurs har skapats
+    # REST-standard: Return 201 Created when a resource has been created
     return jsonify({"playlist_url": playlist_url}), 201
 
 
 # ---------- Facts & Sights API ----------
-# Vi gör staden till en del av sökvägen (path parameter)
+# We make the city into a part of the path (path parameter)
+@app.route('/api/cities/<city_name>/wikipedia')
+def city_wikipedia(city_name):
+    return jsonify(get_wikipedia_summary(city_name))
 @app.route("/api/cities/<city_name>/facts")
 def city_facts(city_name):
     return jsonify(get_wikipedia_summary(city_name))
