@@ -32,6 +32,7 @@ The project integrates the following services:
 
 * Libraries: spotipy (Spotify SDK), requests (API calls), python-dotenv (environment variables), airportsdata.
 
+
 # Installation and Setup
 1. Clone the project:
     https://github.com/delaramazad/WebServicesGroup1
