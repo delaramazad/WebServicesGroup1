@@ -7,7 +7,6 @@ body {
     min-height: 100vh;
 }
 
-
 body::before {
     content: "";
     position: fixed; /* Locks the background so it covers the users screen fully */
@@ -71,12 +70,6 @@ h3 a:hover {
     color: rgb(137, 80, 114);
     opacity: 100%;
 }
-#h1-underline {
-    width: 20%;
-    margin-bottom: 10px;
-    padding-bottom: 10px;
-}
-
 #info-box {
     background-color: rgb(255, 255, 255, 0.5);
     width: 90%;

@@ -1,4 +1,3 @@
-import os
 import json
 from datetime import datetime
 from urllib.parse import quote
@@ -177,9 +176,6 @@ def create_flight_playlist(flight_number):
 
 # ---------- Facts & Sights API ----------
 # We make the city into a part of the path (path parameter)
-@app.route('/api/cities/<city_name>/wikipedia')
-def city_wikipedia(city_name):
-    return jsonify(get_wikipedia_summary(city_name))
 @app.route("/api/cities/<city_name>/facts")
 def city_facts(city_name):
     return jsonify(get_wikipedia_summary(city_name))
