@@ -197,11 +197,16 @@ if (form) {
 
             if (imageElement) {
                 if (flightData.city_image) {
+                  if (flightData.city_image.includes("https://media1.tenor.com/images/f0e8e9237c710dda55a2a86a7c73b40b/tenor.gif")) {
+                      window.alert("Image not found. Enjoy Bibble instead!");
+                    }
+                  
                     imageElement.src = flightData.city_image;
                     imageElement.style.display = "block";
                 } else {
                     imageElement.src = `https://loremflickr.com/600/400/${encodeURIComponent(city)},cityscape`;
                     imageElement.style.display = "block";
+
                 }
             }
 

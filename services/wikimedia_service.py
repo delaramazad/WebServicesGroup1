@@ -35,7 +35,7 @@ class WikimediaService:
                     return image_url
             
             print("Ingen bild hittades på Wikipedia.")
-            image_url = "https://static.wikia.nocookie.net/barbie-movies/images/4/40/Barbie_Fairytopia_Official_Stills_1.jpg/revision/latest"
+            image_url = "https://media1.tenor.com/images/f0e8e9237c710dda55a2a86a7c73b40b/tenor.gif"
             return image_url
 
         except Exception as e:
