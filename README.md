@@ -1,64 +1,59 @@
 # Espotifly
-EspotiFly är en mashup-webbtjänst som kombinerar flygdata i realtid med personliga musikrekommendationer. Genom att ange ett flygnummer kan användaren få information om sin destination och automatiskt generera en Spotify-spellista baserad på artister från det aktuella landet, anpassad efter flygresans längd.
+EspotiFly is a mashup web service that combines real-time flight data with personalized music recommendations. By entering a flight number users can retrieve information about their destination and automatically generate a Spotify playlist. The playlist features artists from that country and preffered music genre.
 
 
-# Funktioner
-* Flygspårning: Hämtar detaljerad information om flygavgångar och ankomster via flygnummer.
+# Features
+* Flight Tracking: Fetches detailed information about flight departures and arrivals via flight number.
 
-* Geografisk data: Kopplar samman flygplatser med länder och städer med hjälp av Wikidata och lokala databaser.
+* Geographic Data: Connects airports with countries and cities using Wikidata and local databases.
 
-* Musikrekommendationer: Identifierar populära artister från destinationslandet via MusicBrainz.
+* Music Recommendations: Identifies popular artists from the destination country via MusicBrainz.
 
-* Automatiserade Spellistor: Skapar en unik spellista på användarens Spotify-konto med topplåtar från de rekommenderade artisterna.
-
-
-# APIs som används
-Projektet integrerar följande tjänster:
-
-* Aviationstack API: För flygstatus och flygplatsinformation.
-
-* MusicBrainz API: För att hämta artister baserat på landskod.
-
-* Spotify Web API: För sökning av låtar och hantering av spellistor.
-
-* Wikimedia API (Wikidata): För att korsreferera IATA-koder med länder.
+* Automated Playlists: Creates a unique playlist on the user's Spotify account featuring top tracks from the recommended artists.
 
 
-# Teknikstack
+# APIs Used
+The project integrates the following services:
 
-* Backend: Python med Flask-ramverket.
+* Aviationstack API: For flight status and airport information.
+
+* MusicBrainz API: To fetch artists based on country codes.
+
+* Spotify Web API: For searching tracks and managing playlists.
+
+* Wikimedia API (Wikidata): To cross-reference IATA codes with countries.
+
+
+# Tech Stack
+
+* Backend: Python with the Flask framework.
 
 * Frontend: HTML5, CSS3 och JavaScript.
 
-* Bibliotek: spotipy (Spotify SDK), requests (API-anrop), python-dotenv (miljövariabler), airportsdata.
+* Libraries: spotipy (Spotify SDK), requests (API calls), python-dotenv (environment variables), airportsdata.
 
-# Installation och Setup
-1. Klona projektet:
+# Installation and Setup
+1. Clone the project:
     https://github.com/delaramazad/WebServicesGroup1
 
-2. Installera beroenden:
+2. Install dependencies:
     pip install -r requirements.txt
 
-3. Konfigurera miljövariabler: Skapa en .env-fil i rotkatalogen och lägg till dina API-nycklar:
+3. Configure environment variables: 
+    Create a .env file in the root directory and add your API keys:
 
-AVIATION_API_KEY=din_nyckel
-SPOTIFY_CLIENT_ID=ditt_id
-SPOTIFY_CLIENT_SECRET=din_secret
+AVIATION_API_KEY=your_key
+SPOTIFY_CLIENT_ID=your_id
+SPOTIFY_CLIENT_SECRET=your_secret
 SPOTIFY_REDIRECT_URI=http://127.0.0.1:8081
 
 *These credentials are to be obtained separately from the group to maintain the security of the credentials. They must be manually switched out by the user to the correct credentials in order for the program to function. Please see the attached document titled "ENV INFO".*
 
-4. Kör aplikationen:
-python app.py i terminalen 
-Appen startar på http://127.0.0.1:8081 by holding the Ctrl button and clicking on it with your mouse.
+4. Run the application:
+    Type python app.py in the terminal. The app starts at http://127.0.0.1:8081 (hold Ctrl and click the link).
 
-alternativt 
+Alternatively: 
+    Type py app.py in the terminal.
 
-py app.py i terminalen
-Appen startar på http://127.0.0.1:8081 by holding the Ctrl button and clicking on it with your mouse.
-
-alternativt
-
-Run the program by navigating to the "app.py" file in Visual Studio Code and pressing "Run Python file", thereafter observe the command-box at the bottom of the screen in the same program, and open the link: "http://localhost:8090/"  
-
-Appen startar på http://127.0.0.1:8081 by holding the Ctrl button and clicking on it with your mouse.
+Alternatively: 
+    Run the program by navigating to the app.py file in Visual Studio Code and pressing "Run Python file". Then, observe the command box at the bottom of the screen and open the link: http://localhost:8081/
