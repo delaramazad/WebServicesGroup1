@@ -125,7 +125,7 @@ async function loadFactsIfNeeded() {
   factsPanel.innerHTML = `<p class="loading">Loading facts...</p>`;
 
   try {
-    const data = await fetcher(`/api/city/facts?city=${encodeURIComponent(state.city ?? "")}`, { method: 'GET' });
+    const data = await fetcher(`/api/cities/${encodeURIComponent(state.city)}/facts`, { method: 'GET' });
     state.cache.facts = data;
     renderFacts(data);
   } catch (e) {
@@ -142,7 +142,7 @@ async function loadSightsIfNeeded() {
   sightsPanel.innerHTML = `<p class="loading">Loading sights...</p>`;
 
   try {
-    const data = await fetcher(`/api/city/sights?city=${encodeURIComponent(state.city ?? "")}`, { method: 'GET' });
+    const data = await fetcher(`/api/cities/${encodeURIComponent(state.city)}/sights`, { method: 'GET' });
     state.cache.sights = data;
     renderSights(data);
   } catch (e) {
@@ -173,57 +173,64 @@ if (form) {
         }
         if (destinationContainer) destinationContainer.style.display = 'none';
         
-        // Rensa gamla paneler (viktigt om man söker igen)
+        // Rensa gamla paneler
         resetPanels();
 
         try {
-            // API ANROP
-            const data = await fetcher('/get_flight_info', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ flightNumber, genres })
+            // STEG 1: HÄMTA FLYGINFO (RESTful GET)
+            const flightData = await fetcher(`/api/flights/${encodeURIComponent(flightNumber)}`, {
+                method: 'GET'
             });
 
-            if (spinner) spinner.style.display = 'none';
-
-            if (!data || data.error) {
-              window.alert("Flight not found. Please check the flight number and try again.");
-                if (emptyP) emptyP.textContent = data?.error ?? "Could not find flight.";
+            if (!flightData || flightData.error) {
+                if (spinner) spinner.style.display = 'none';
+                window.alert("Flight not found. Please check the flight number.");
                 return;
             }
 
-            const city = data.destination_city || "Unknown City";
-            const country = data.destination_country || "Unknown Country";
+            // Uppdatera UI med flyginformation direkt (vi väntar inte på spellistan för detta)
+            const city = flightData.destination_city || "Unknown City";
+            const country = flightData.destination_country || "Unknown Country";
             state.city = city;
 
             if (titleElement) titleElement.innerText = `${city}, ${country}`;
 
             if (imageElement) {
-                if (data.city_image) {
-                    imageElement.src = data.city_image;
+                if (flightData.city_image) {
+                    imageElement.src = flightData.city_image;
                     imageElement.style.display = "block";
-                } else if (city && city !== "Unknown City") {
+                } else {
                     imageElement.src = `https://loremflickr.com/600/400/${encodeURIComponent(city)},cityscape`;
                     imageElement.style.display = "block";
-                } else {
-                    imageElement.style.display = "none";
                 }
             }
 
-            // Spotify
-            if (spotifyBtn) {
-                if (data.playlist_url) {
-                    spotifyBtn.href = data.playlist_url;
-                    spotifyBtn.style.display = "inline-flex";
-                } else {
-                    spotifyBtn.style.display = "none";
-                }
-            }
-
-            // 4. VISA RESULTAT
+            // Visa containern så användaren ser staden medan spellistan skapas
             if (destinationContainer) {
-                destinationContainer.style.display = "flex"; // Använder flexbox för styling
+                destinationContainer.style.display = "flex";
                 destinationContainer.scrollIntoView({ behavior: 'smooth' });
+            }
+
+            // STEG 2: SKAPA SPELLISTA (RESTful POST)
+            // Vi skickar genres och iso_code i bodyn enligt REST-praxis
+            const playlistData = await fetcher(`/api/flights/${encodeURIComponent(flightNumber)}/playlists`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    genres: genres,
+                    iso_code: flightData.iso_code 
+                })
+            });
+
+            // Göm spinner när allt är klart
+            if (spinner) spinner.style.display = 'none';
+
+            // Uppdatera Spotify-knappen om vi fick en länk
+            if (spotifyBtn && playlistData && playlistData.playlist_url) {
+                spotifyBtn.href = playlistData.playlist_url;
+                spotifyBtn.style.display = "inline-flex";
+            } else if (spotifyBtn) {
+                spotifyBtn.style.display = "none";
             }
 
         } catch (error) {
@@ -233,6 +240,7 @@ if (form) {
         }
     });
 }
+
 
 // ---------- BUTTON EVENTS (Facts & Sights) ----------
 if (factsBtn) {
