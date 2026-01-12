@@ -2,33 +2,29 @@ openapi: 3.0.0
 info:
   title: Espotifly API
   description: >
-    Espotifly är en mashup-tjänst som kombinerar flygdata, geografisk information 
-    och musik för att skapa personliga rese-spellistor.
+    Espotifly is a mashup service that combines flight data, geographic information 
+    and music to create personalized travel playlists.
   version: 1.0.0
 
 servers:
   - url: http://127.0.0.1:8081
-    description: Lokal utvecklingsserver
+    description: Local development server
 
 paths:
-  /get_flight_info:
-    post:
-      summary: Hämtar sammansatt flyg- och musikdata
-      description: Tar emot ett flygnummer och returnerar detaljer om flyget, destinationen och en länk till en nyskapad Spotify-spellista.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                flightNumber:
-                  type: string
-                  description: IATA-koden för flyget (t.ex. FM891).
-                  example: "FM891"
+  /api/flights/{flight_number}:
+    get:
+      summary: Get flight information and destination data
+      description: Returns details about the flight, destination city, country display name, and a city image URL.
+      parameters:
+        - name: flight_number
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The IATA code for the flight (e.g., AA2730).
       responses:
         '200':
-          description: Data hämtades och spellista skapades framgångsrikt.
+          description: Flight data retrieved successfully.
           content:
             application/json:
               schema:
@@ -36,41 +32,71 @@ paths:
                 properties:
                   flight:
                     type: object
-                    description: Rådata från Aviationstack API.
+                    description: Raw flight data from the aviation service.
                   destination_country:
                     type: string
-                    description: Namnet eller koden på destinationslandet.
-                  music_recommendations:
-                    type: array
-                    items:
-                      type: string
-                    description: Lista på artister hämtade från MusicBrainz.
+                    description: Display name of the destination country.
+                  destination_city:
+                    type: string
+                    description: Name of the destination city.
+                  city_image:
+                    type: string
+                    description: URL to a representative image of the city.
+                  iso_code:
+                    type: string
+                    description: The country's ISO code for music recommendations.
+        '404':
+          description: No flight data found for the specified number.
+
+  /api/flights/{flight_number}/playlists:
+    post:
+      summary: Create a Spotify flight playlist
+      description: Generates a unique playlist based on the destination country, selected genres, and flight duration.
+      parameters:
+        - name: flight_number
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                genres:
+                  type: array
+                  items:
+                    type: string
+                  description: List of preferred music genres.
+                iso_code:
+                  type: string
+                  description: ISO country code to filter artists.
+      responses:
+        '201':
+          description: Playlist created successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
                   playlist_url:
                     type: string
-                    description: URL till den genererade Spotify-spellistan.
-        '404':
-          description: Inga flygdata hittades för det angivna numret.
+                    description: URL to the generated Spotify playlist.
 
-/:
+  /api/cities/{city_name}/facts:
     get:
-      summary: Visar startsidan
-      description: Renderar landningssidan där användaren kan mata in sitt flygnummer.
+      summary: Get facts about a city
+      description: Retrieves a Wikipedia summary for the specified city.
+      parameters:
+        - name: city_name
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         '200':
-          description: Startsidan visas framgångsrikt.
-          content:
-            text/html:
-              schema:
-                type: string
+          description: City facts retrieved.
 
-/about-us:
-    get:
-      summary: Visar information om projektet
-      description: Renderar en sida som beskriver projektet Espotifly och vilka API:er som används (Aviationstack, MusicBrainz, Spotify och Wikidata).
-      responses:
-        '200':
-          description: "Om oss"-sidan visas framgångsrikt.
-          content:
-            text/html:
-              schema:
-                type: string
+  /api/cities/{city_name}/sights:
