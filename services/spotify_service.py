@@ -23,7 +23,7 @@ class SpotifyService:
         fixed_hours = 5
         target_duration_ms = fixed_hours * 60 * 60 * 1000
         
-        print(f"--- Skapar spellista: Mål {fixed_hours} timmar ({target_duration_ms} ms) ---")
+        print(f"Creating playlist: Target {fixed_hours} hours ({target_duration_ms} ms)")
         
         current_duration_ms = 0
         track_uris = [] 
@@ -58,11 +58,11 @@ class SpotifyService:
                     if current_duration_ms >= target_duration_ms: break
                         
             except Exception as e:
-                print(f"Fel med artist {artist_name}: {e}")
+                print(f"wrong artist {artist_name}: {e}")
 
         # Create the playlist
         if not track_uris:
-            print("Inga låtar hittades.")
+            print("No songs found.")
             return None 
 
         try:
@@ -78,11 +78,11 @@ class SpotifyService:
                 chunk = track_uris[i:i + 100]
                 self.sp.playlist_add_items(new_playlist['id'], chunk)
             
-            print(f"Spellista klar! Länk: {new_playlist['external_urls']['spotify']}")
-            print(f"Total längd: {current_duration_ms / 1000 / 60} minuter.")
+            print(f"Playlist ready, Link: {new_playlist['external_urls']['spotify']}")
+            print(f"Total duration: {current_duration_ms / 1000 / 60} minutes.")
             
             return new_playlist['external_urls']['spotify']
 
         except Exception as e:
-            print(f"Kunde inte skapa spellista: {e}")
+            print(f"Could not create playlist: {e}")
             return None

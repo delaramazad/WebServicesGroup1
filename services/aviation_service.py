@@ -20,11 +20,11 @@ def get_flight_data(flight_number):
             for flight in json_response['data']:
                 arrival = flight.get('arrival')
                 if arrival and arrival.get('iata'):
-                    print(f"Hittade flygdata MED IATA: {arrival.get('iata')}")
+                    print(f"data found with IATA: {arrival.get('iata')}")
                     return flight
             
             # If no IATA avaliable, return the first anyways (we rely on the namesearch)
-            print("Ingen IATA hittades, returnerar första träffen.")
+            print("No IATA found, returning first match.")
             return json_response['data'][0] 
             
         else:

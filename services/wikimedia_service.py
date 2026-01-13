@@ -21,7 +21,7 @@ class WikimediaService:
         headers = {'User-Agent': 'Espotifly/1.0 (student-project)'}
 
         try:
-            print(f"Letar efter bild på {city_name} via Wikipedia...")
+            print(f"looking for image {city_name} on Wikipedia...")
             response = requests.get(url, params=params, headers=headers, timeout=5)
             data = response.json()
             
@@ -31,13 +31,13 @@ class WikimediaService:
             for page_id, page_data in pages.items():
                 if "original" in page_data:
                     image_url = page_data["original"]["source"]
-                    print(f"Hittade bild: {image_url}")
+                    print(f"image found: {image_url}")
                     return image_url
             
-            print("Ingen bild hittades på Wikipedia.")
+            print("No image found on Wikipedia.")
             image_url = "https://media1.tenor.com/images/f0e8e9237c710dda55a2a86a7c73b40b/tenor.gif"
             return image_url
 
         except Exception as e:
-            print(f"Fel vid bildhämtning: {e}")
+            print(f"error fetching image: {e}")
             return None

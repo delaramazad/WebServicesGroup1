@@ -92,9 +92,9 @@ class MusicBrainzService:
                     artists = self._stable_shuffle(artists, f"{iso_code}|{','.join(sorted(user_tags))}")
                     return artists[:40]
                 else:
-                    print("0 träffar på valda genrer – fallback till default.")
+                    print("0 found on chosen genre – fallback to default.")
             except Exception as e:
-                print(f"Kunde inte nå MusicBrainz API (user tags): {e}")
+                print(f"Could not reach MusicBrainz API (user tags): {e}")
 
         # Fallback: default tags
         try:
@@ -103,7 +103,7 @@ class MusicBrainzService:
                 artists = self._stable_shuffle(artists, f"{iso_code}|default")
                 return artists[:40]
         except Exception as e:
-            print(f"Kunde inte nå MusicBrainz API (default): {e}")
+            print(f"Could not reach MusicBrainz API (default): {e}")
 
-        print("Går över till reservlistan (Backup)...")
-        return self.MUSIC_BACKUPS.get(iso_code, ["Inga artister hittades"])
+        print("Switching to backup list...")
+        return self.MUSIC_BACKUPS.get(iso_code, ["No artists found"])
